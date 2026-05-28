@@ -1,80 +1,131 @@
-### 1. Library Overview
+# Sequelize Research Plan
 
-*   **Description**: Sequelize is a feature-rich, promise-based Node.js ORM for PostgreSQL, MySQL, MariaDB, SQLite, MS SQL Server, and more. It allows developers to interact with relational databases using JavaScript/TypeScript objects rather than raw SQL.
-*   **Ecosystem Role**: It is the most popular ORM in the Node.js ecosystem, serving as the data layer for thousands of web applications. It bridges the gap between object-oriented code and relational schemas, providing powerful abstraction for migrations, associations, and transactions.
-*   **Project Setup**:
-    1.  Install core and dialect: `npm install sequelize pg pg-hstore` (for Postgres).
-    2.  Install CLI: `npm install --save-dev sequelize-cli`.
-    3.  Initialize project: `npx sequelize-cli init`. This creates `config/`, `models/`, `migrations/`, and `seeders/`.
-    4.  Configure database in `config/config.json`.
-    5.  Generate model: `npx sequelize-cli model:generate --name User --attributes firstName:string,email:string`.
+## 1. Library Overview
 
-### 2. Core Primitives & APIs
+**Description:**
+Sequelize is a modern, promise-based Node.js ORM (Object-Relational Mapper) that supports PostgreSQL, MySQL, MariaDB, SQLite, Microsoft SQL Server, and Oracle. It features solid transaction support, relations, eager and lazy loading, read replication, and more.
 
-*   **Sequelize Instance**: The main entry point for database connection.
-    *   [Documentation: Getting Started](https://sequelize.org/docs/v6/getting-started/)
-    *   ```javascript
-        const { Sequelize } = require('sequelize');
-        const sequelize = new Sequelize('database', 'username', 'password', { host: 'localhost', dialect: 'postgres' });
+**Ecosystem Role:**
+Sequelize serves as the data access and persistence layer in Node.js applications. It is extremely popular in Express.js backends and is officially supported in the NestJS ecosystem via `@nestjs/sequelize`.
+
+**Project Setup (SQLite):**
+```bash
+# Install Sequelize and the SQLite driver
+npm install sequelize sqlite3
+```
+
+Basic Initialization:
+```javascript
+const { Sequelize } = require('sequelize');
+
+// Initialize with SQLite
+const sequelize = new Sequelize({
+  dialect: 'sqlite',
+  storage: './database.sqlite' // Path to SQLite file
+});
+
+// Test the connection
+async function testConnection() {
+  try {
+    await sequelize.authenticate();
+    console.log('Connection has been established successfully.');
+  } catch (error) {
+    console.error('Unable to connect to the database:', error);
+  }
+}
+```
+
+## 2. Core Primitives & APIs
+
+*   **Sequelize Instance**: Represents the connection to the database.
+    *   *Docs*: [Getting Started](https://sequelize.org/docs/v6/getting-started/)
+    *   *Usage*: `new Sequelize({ dialect: 'sqlite', storage: 'path/to/db.sqlite' })`
+*   **Models**: Classes that represent tables in the database.
+    *   *Docs*: [Model Basics](https://sequelize.org/docs/v6/core-concepts/model-basics/)
+    *   *Usage*:
+        ```javascript
+        const { Model, DataTypes } = require('sequelize');
+        class User extends Model {}
+        User.init({
+          username: { type: DataTypes.STRING, allowNull: false },
+          birthday: { type: DataTypes.DATE }
+        }, { sequelize, modelName: 'user' });
         ```
-*   **Model Definition**: Defining the schema and behavior of a table.
-    *   [Documentation: Model Basics](https://sequelize.org/docs/v6/core-concepts/model-basics/)
-    *   ```javascript
-        const User = sequelize.define('User', {
-          username: { type: DataTypes.STRING, allowNull: false, unique: true },
-          status: { type: DataTypes.ENUM('active', 'inactive'), defaultValue: 'active' }
-        });
+*   **Querying (CRUD)**: Methods to create, read, update, and delete records.
+    *   *Docs*: [Model Querying](https://sequelize.org/docs/v6/core-concepts/model-querying-basics/)
+    *   *Usage*:
+        ```javascript
+        // Create
+        const user = await User.create({ username: 'jane' });
+        // Read
+        const users = await User.findAll({ where: { username: 'jane' } });
         ```
-*   **Associations**: Linking models together (`hasOne`, `belongsTo`, `hasMany`, `belongsToMany`).
-    *   [Documentation: Associations](https://sequelize.org/docs/v6/core-concepts/assocs/)
-    *   ```javascript
-        User.hasMany(Post, { foreignKey: 'userId', as: 'posts' });
-        Post.belongsTo(User, { foreignKey: 'userId' });
-        ```
-*   **Query Interface**: Used in migrations to modify the database schema.
-    *   [Documentation: Migrations](https://sequelize.org/docs/v6/other-topics/migrations/)
-    *   ```javascript
-        // Inside a migration file
-        up: async (queryInterface, Sequelize) => {
-          await queryInterface.addColumn('Users', 'age', { type: Sequelize.INTEGER });
+*   **Validation and Constraints**: Built-in and custom rules applied before saving to the database.
+    *   *Docs*: [Validations & Constraints](https://sequelize.org/docs/v6/core-concepts/validations-and-constraints/)
+    *   *Usage*:
+        ```javascript
+        age: {
+          type: DataTypes.INTEGER,
+          validate: { min: 18, isInt: true }
         }
         ```
-*   **Transactions**: Ensuring atomicity for multiple operations.
-    *   [Documentation: Transactions](https://sequelize.org/docs/v6/other-topics/transactions/)
-    *   ```javascript
-        await sequelize.transaction(async (t) => {
-          const user = await User.create({ name: 'Alice' }, { transaction: t });
-          await Profile.create({ userId: user.id }, { transaction: t });
+*   **Associations**: Defining relationships (One-to-One, One-to-Many, Many-to-Many).
+    *   *Docs*: [Associations](https://sequelize.org/docs/v6/core-concepts/assocs/)
+    *   *Usage*:
+        ```javascript
+        User.hasMany(Post, { as: 'articles' });
+        Post.belongsTo(User);
+        // Eager loading
+        const users = await User.findAll({ include: 'articles' });
+        ```
+*   **Hooks**: Lifecycle events (e.g., `beforeValidate`, `afterCreate`) triggered during model operations.
+    *   *Docs*: [Hooks](https://sequelize.org/docs/v6/other-topics/hooks/)
+    *   *Usage*:
+        ```javascript
+        User.beforeCreate(async (user, options) => {
+          user.password = await hashPassword(user.password);
         });
         ```
+*   **Migrations**: Version control for database schemas using the Sequelize CLI.
+    *   *Docs*: [Migrations](https://sequelize.org/docs/v6/other-topics/migrations/)
 
-### 3. Real-World Use Cases & Templates
+## 3. Real-World Use Cases & Templates
 
-*   **Official Express Example**: [sequelize/express-example](https://github.com/sequelize/express-example) - A standard proposal for integrating Sequelize with Express.
-*   **Full-Stack Boilerplate**: [gadfaria/express-sequelize-boilerplate](https://github.com/gadfaria/express-sequelize-boilerplate) - A production-ready REST API template using PostgreSQL and JWT.
-*   **Integration Pattern**: Common pattern involves a `models/index.js` file that dynamically imports all models and sets up associations during application startup.
+*   **Express + Sequelize Boilerplates**: Repositories like [binitghetiya/express-sequelize-api-boilerplate](https://github.com/binitghetiya/express-sequelize-api-boilerplate) demonstrate standard MVC architecture, JWT authentication, and CLI-based migrations.
+*   **NestJS Integration**: The official `@nestjs/sequelize` package (and templates like [kentloog/nestjs-sequelize-typescript](https://github.com/kentloog/nestjs-sequelize-typescript)) showcases how Sequelize models can be injected as providers in a dependency-injection framework.
 
-### 4. Developer Friction Points
+## 4. Developer Friction Points
 
-*   **Circular Dependencies**: When two models reference each other, `sequelize.sync` may fail with a "Cyclic dependency found" error. Developers must use `{ constraints: false }` on one of the associations to break the loop. [Issue Discussion](https://github.com/sequelize/sequelize/issues/1085).
-*   **Eager Loading Performance**: Using `include` with large datasets can lead to N+1 query problems or massive JOINs that degrade performance. Developers often struggle with when to use `subQuery: false` to fix `limit`/`offset` issues in joined queries. [SubQuery Issue](https://github.com/sequelize/sequelize/issues/12913).
-*   **Transaction Propagation in Hooks**: Hooks (like `afterCreate`) do not automatically inherit the transaction from the parent call unless explicitly passed in the options, leading to data inconsistencies.
+*   **`sync({ force: true })` vs. Migrations in Production**: Developers often use `sequelize.sync()` during development but struggle when transitioning to production. Using `sync({ force: true })` is highly dangerous as it drops tables, and developers frequently debate the best practices for structuring migrations vs. syncing.
+    *   *Issue*: [Sequelize.sync({ force: true }) is too dangerous to live. #2670](https://github.com/sequelize/sequelize/issues/2670)
+    *   *Issue*: [Best Practice: DB Sync + Migrations? Or just Migrations? #4160](https://github.com/sequelize/sequelize/issues/4160)
+*   **"Include unexpected" Error with Aliases**: When querying associated models using the `include` option, passing a string alias (e.g., `include: ['alias']`) throws a confusing "Include unexpected" error if `{ as: 'alias' }` was not explicitly defined in the association mapping, confusing many developers.
+    *   *Issue*: ["Include unexpected" error with string include #10613](https://github.com/sequelize/sequelize/issues/10613)
+    *   *Issue*: [Error: Include unexpected. Element has to be either a Model, an Association or an object #11685](https://github.com/sequelize/sequelize/issues/11685)
+*   **Hooks Not Firing on Bulk Operations**: By default, model lifecycle hooks (like `beforeUpdate` or `afterCreate`) do not execute during bulk operations (e.g., `Model.bulkCreate()` or `Model.update()` with a `where` clause) for performance reasons. Developers expect them to fire and must explicitly pass `{ individualHooks: true }`, which is a common source of unexpected data states.
+    *   *Issue*: [afterBulkCreate hook unexpectedly firing on relationship model #6300](https://github.com/sequelize/sequelize/issues/6300)
+    *   *Issue*: [bulkCreate fails when validate and individualHooks options are set #2934](https://github.com/sequelize/sequelize/issues/2934)
 
-### 5. Evaluation Ideas
+## 5. Evaluation Ideas
 
-*   **Basic**: Initialize a Sequelize project and create a `Product` model with basic CRUD endpoints.
-*   **Intermediate**: Implement a One-to-Many relationship between `Author` and `Book` with a migration that adds a `category` column to `Book`.
-*   **Intermediate**: Set up a Many-to-Many relationship between `Student` and `Course` using a custom junction table `Enrollment` with extra attributes like `grade`.
-*   **Advanced**: Implement a complex migration that renames a column and migrates data without downtime or data loss.
-*   **Advanced**: Solve a circular dependency issue between `User` and `Account` where each references the other as "primary".
-*   **Advanced**: Optimize a slow endpoint by replacing deep eager loading (`include`) with a manual transaction and optimized batch queries.
-*   **V7 Migration**: Refactor a V6 model definition to the new V7 TypeScript decorator-based syntax.
+*   Implement a complex Many-to-Many association with a custom junction table.
+*   Write a query that uses nested `include` statements with filtered `where` conditions on the child models.
+*   Create a custom model validation that checks for overlapping date ranges in the database before saving.
+*   Implement a `beforeCreate` hook that automatically generates and assigns a slug based on a title field.
+*   Write a migration script using `sequelize-cli` to add a new column, backfill data, and add a foreign key constraint.
+*   Configure a `bulkCreate` operation that successfully triggers individual model hooks for password hashing.
 
-### 6. Sources
+## 6. Sources
 
-1.  [Sequelize Official Documentation (v6)](https://sequelize.org/docs/v6/) - Primary source for API and guides.
-2.  [Sequelize CLI GitHub](https://github.com/sequelize/cli) - Documentation for the command-line interface.
-3.  [Sequelize Express Example](https://github.com/sequelize/express-example) - Official integration template.
-4.  [GitHub Issues: Circular Dependencies](https://github.com/sequelize/sequelize/issues/1085) - Common friction point research.
-5.  [Postgres Safe Migrations (Retool)](https://retool.com/blog/running-safe-database-migrations-using-postgres) - Research on safe schema changes with Sequelize.
-6.  [Sequelize v7 (Alpha) Docs](https://sequelize.org/docs/v7/) - Overview of upcoming changes and TypeScript support.
+1.  [Sequelize Official Documentation (v6)](https://sequelize.org/docs/v6/) - Core concepts, getting started, and APIs.
+2.  [NestJS Sequelize Documentation](https://docs.nestjs.com/techniques/database) - Integration patterns with NestJS.
+3.  [GitHub Issue #2670](https://github.com/sequelize/sequelize/issues/2670) - Discussion on the dangers of `sync()`.
+4.  [GitHub Issue #4160](https://github.com/sequelize/sequelize/issues/4160) - Discussion on Sync vs Migrations best practices.
+5.  [GitHub Issue #10613](https://github.com/sequelize/sequelize/issues/10613) - Bug report regarding string includes and aliases.
+6.  [GitHub Issue #11685](https://github.com/sequelize/sequelize/issues/11685) - "Include unexpected" error context.
+7.  [GitHub Issue #6300](https://github.com/sequelize/sequelize/issues/6300) - Discussion on bulk operation hooks.
+8.  [GitHub Issue #2934](https://github.com/sequelize/sequelize/issues/2934) - Context on `individualHooks` usage.
+
+## Suggestions for Generating Tasks
+
+**NOTE**: Please use SQLite as the dialect for development and testing. It is simple to seed test data and verify results.
