@@ -1,0 +1,134 @@
+1:"$Sreact.fragment"
+2:I[47618,["/sequelize-benchmark/pr-preview/pr-3/_next/static/chunks/babff0e7418ab052.js","/sequelize-benchmark/pr-preview/pr-3/_next/static/chunks/3ecbb78a8ff87549.js"],"AppQueryProvider"]
+3:I[20416,["/sequelize-benchmark/pr-preview/pr-3/_next/static/chunks/babff0e7418ab052.js","/sequelize-benchmark/pr-preview/pr-3/_next/static/chunks/3ecbb78a8ff87549.js"],"ThemeProvider"]
+4:I[63155,["/sequelize-benchmark/pr-preview/pr-3/_next/static/chunks/babff0e7418ab052.js","/sequelize-benchmark/pr-preview/pr-3/_next/static/chunks/3ecbb78a8ff87549.js"],"ThemeToggle"]
+5:I[36064,["/sequelize-benchmark/pr-preview/pr-3/_next/static/chunks/d2c13bb33c4fcd54.js","/sequelize-benchmark/pr-preview/pr-3/_next/static/chunks/c21188132e0e0d48.js"],"default"]
+6:I[81497,["/sequelize-benchmark/pr-preview/pr-3/_next/static/chunks/d2c13bb33c4fcd54.js","/sequelize-benchmark/pr-preview/pr-3/_next/static/chunks/c21188132e0e0d48.js"],"default"]
+7:"$Sreact.suspense"
+8:I[42654,["/sequelize-benchmark/pr-preview/pr-3/_next/static/chunks/babff0e7418ab052.js","/sequelize-benchmark/pr-preview/pr-3/_next/static/chunks/3ecbb78a8ff87549.js","/sequelize-benchmark/pr-preview/pr-3/_next/static/chunks/67d4b3c35eb682b4.js","/sequelize-benchmark/pr-preview/pr-3/_next/static/chunks/f9f579c42c486944.js"],"TasksPageClient"]
+10:I[9986,["/sequelize-benchmark/pr-preview/pr-3/_next/static/chunks/d2c13bb33c4fcd54.js","/sequelize-benchmark/pr-preview/pr-3/_next/static/chunks/c21188132e0e0d48.js"],"default"]
+:HL["/sequelize-benchmark/pr-preview/pr-3/_next/static/chunks/8d8099cc2c936605.css","style"]
+:HL["/sequelize-benchmark/pr-preview/pr-3/_next/static/media/83afe278b6a6bb3c-s.p.3a6ba036.woff2","font",{"crossOrigin":"","type":"font/woff2"}]
+9:T742,# Sequelize Aliased Associations
+
+## Background
+You need to build a small script using Sequelize and SQLite to manage `Person` and `Mail` records. You must establish two relationships between them so a `Mail` has a `sender` and a `receiver`. Many developers encounter the "Include unexpected" error when trying to eager load associations with aliases if the aliases are not defined correctly.
+
+## Requirements
+- Initialize a Sequelize instance using SQLite.
+- Create a `Person` model with a `name` (STRING) field.
+- Create a `Mail` model with a `content` (STRING) field.
+- Define associations such that a `Mail` belongs to a `Person` as a `sender`, and also belongs to a `Person` as a `receiver`.
+- Write a script `index.js` that:
+  1. Connects to a SQLite database at `./database.sqlite`.
+  2. Syncs the models.
+  3. Creates two persons: "Alice" and "Bob".
+  4. Creates a mail with content "Hello" where the sender is "Alice" and the receiver is "Bob".
+  5. Queries the mail from the database, eager loading BOTH the sender and the receiver using their aliases.
+  6. Prints the result to stdout in a specific format.
+
+## Implementation Hints
+- Use `belongsTo` with the `as` option to define the `sender` and `receiver` aliases on the `Mail` model.
+- When querying with `findOne` or `findAll`, use the `include` option with the exact aliases to eager load the associated models and avoid the "Include unexpected" error.
+- Use `sequelize.sync({ force: true })` to ensure the database is clean on each run.
+
+## Acceptance Criteria
+- Project path: /home/user/myproject
+- Command: `node index.js`
+- The script must execute without errors.
+- The stdout should print the fetched mail's information in exactly this format: `Result: Alice sent "Hello" to Bob`
+- The database file `./database.sqlite` must be created and contain the correct tables and foreign keys.
+
+a:Ta41,# Sequelize Bulk Operations and Associations API
+
+## Background
+You are building a backend service using Express.js, Sequelize, and SQLite. You need to implement bulk data insertion and eager loading of associations, addressing common Sequelize friction points such as hooks not firing on bulk operations and the "Include unexpected" error.
+
+## Requirements
+- Create two Sequelize models: `User` (`username`, `password`, `slug`) and `Article` (`title`, `content`).
+- Define an association where a `User` has many `Article`s. You must alias this association as `articles`.
+- Implement a `beforeCreate` hook on the `User` model that:
+  1. Hashes the `password` using SHA-256 (use Node's built-in `crypto` module and output as a hex string).
+  2. Generates a `slug` based on the `username` (convert to lowercase and replace any spaces with hyphens).
+- Implement an Express REST API with the following endpoints:
+  - `POST /users/bulk`: Accepts an array of user objects. Uses Sequelize's `bulkCreate` to insert them. You must ensure the `beforeCreate` hook is triggered for each record.
+  - `POST /users/:id/articles`: Creates a new article associated with the specified user ID.
+  - `GET /users`: Fetches all users and eagerly loads their associated articles. You must query this correctly to avoid the Sequelize "Include unexpected" error.
+- Store data in a SQLite database file named `database.sqlite`.
+
+## Implementation Hints
+- Use Express routing and middleware to parse JSON requests.
+- Initialize Sequelize with the `sqlite` dialect and sync the models on server startup.
+- Remember that `bulkCreate` does not run individual model hooks by default; you must configure it via options.
+- When querying with `include`, if an alias (`as`) was defined in the association, you must provide the exact same alias or the model with the alias in the `include` array to avoid errors.
+- Use `crypto.createHash('sha256').update(text).digest('hex')` for hashing.
+
+## Acceptance Criteria
+- Project path: /home/user/myproject
+- Start command: node index.js
+- Port: 3000
+- API Endpoints:
+  - `POST /users/bulk`: Accepts a JSON array of users `[{"username": "string", "password": "string"}]` and returns `201 Created` with the created user objects (must include `id`, `username`, `password` (hashed), and `slug`).
+  - `POST /users/:id/articles`: Accepts a JSON object `{"title": "string", "content": "string"}` and returns `201 Created` with the created article object.
+  - `GET /users`: Returns `200 OK` with a JSON array of all users. Each user object must contain an `articles` property which is an array of their associated articles.
+
+b:T9de,# Sequelize Nested Includes and Filtering
+
+## Background
+Create an Express REST API using Sequelize and SQLite to manage Companies, Departments, and Employees. The API needs a complex query to fetch companies with deeply nested and filtered associations.
+
+## Requirements
+- Define three models: `Company` (string `name`), `Department` (string `name`, string `status`), and `Employee` (string `name`, string `role`).
+- Define associations: A Company has many Departments, and a Department has many Employees.
+- Implement a RESTful API with the following endpoints:
+  - POST `/seed`: Accepts a JSON payload to populate the database. It should clear existing data and insert the provided nested data.
+  - GET `/companies/filtered`: Returns all companies. It must include their departments, but ONLY departments where `status` is `'active'`. Within those active departments, it must include employees, but ONLY employees where `role` is `'senior'`. 
+  - **CRITICAL**: Companies without any active departments MUST still be included in the response (with an empty departments array). Active departments without any senior employees MUST still be included in the response (with an empty employees array).
+- Store data in a SQLite database at `./database.sqlite`.
+
+## Implementation Hints
+- Use `Sequelize.sync({ force: true })` during the `/seed` endpoint to reset the database.
+- For the nested filtering, use Sequelize's `include` option with `where` clauses.
+- Pay close attention to the `required` property in your `include` options. By default, adding a `where` clause to an `include` makes it an INNER JOIN, which would filter out parent records that don't have matching children. You need a LEFT OUTER JOIN.
+
+## Acceptance Criteria
+- Project path: /home/user/myproject
+- Start command: npm start
+- Port: 3000
+- API Endpoints:
+  - POST `/seed`: Accepts a JSON array of companies with nested departments and employees. Returns status 200 OK after successfully syncing and seeding the database.
+
+    ```json
+    // Request
+    [
+      {
+        "name": string,
+        "departments": [
+          {
+            "name": string,
+            "status": string,
+            "employees": [
+              {
+                "name": string,
+                "role": string
+              }
+            ]
+          }
+        ]
+      }
+    ]
+    ```
+
+  - GET `/companies/filtered`: Returns status 200 and a JSON array of company objects. The JSON structure should match the seed payload, but strictly filtered according to the requirements.
+
+0:{"P":null,"b":"4L9VxUj2Du-CHcFYxe9qe","c":["","tasks",""],"q":"","i":false,"f":[[["",{"children":["tasks",{"children":["__PAGE__",{}]}]},"$undefined","$undefined",true],[["$","$1","c",{"children":[[["$","link","0",{"rel":"stylesheet","href":"/sequelize-benchmark/pr-preview/pr-3/_next/static/chunks/8d8099cc2c936605.css","precedence":"next","crossOrigin":"$undefined","nonce":"$undefined"}],["$","script","script-0",{"src":"/sequelize-benchmark/pr-preview/pr-3/_next/static/chunks/babff0e7418ab052.js","async":true,"nonce":"$undefined"}],["$","script","script-1",{"src":"/sequelize-benchmark/pr-preview/pr-3/_next/static/chunks/3ecbb78a8ff87549.js","async":true,"nonce":"$undefined"}]],["$","html",null,{"lang":"en","suppressHydrationWarning":true,"children":["$","body",null,{"className":"inter_5972bc34-module__OU16Qa__className antialiased","children":["$","$L2",null,{"children":["$","$L3",null,{"defaultTheme":"dark","children":[["$","div",null,{"className":"fixed right-4 top-6 z-50 sm:top-8","children":["$","$L4",null,{}]}],["$","$L5",null,{"parallelRouterKey":"children","error":"$undefined","errorStyles":"$undefined","errorScripts":"$undefined","template":["$","$L6",null,{}],"templateStyles":"$undefined","templateScripts":"$undefined","notFound":[[["$","title",null,{"children":"404: This page could not be found."}],["$","div",null,{"style":{"fontFamily":"system-ui,\"Segoe UI\",Roboto,Helvetica,Arial,sans-serif,\"Apple Color Emoji\",\"Segoe UI Emoji\"","height":"100vh","textAlign":"center","display":"flex","flexDirection":"column","alignItems":"center","justifyContent":"center"},"children":["$","div",null,{"children":[["$","style",null,{"dangerouslySetInnerHTML":{"__html":"body{color:#000;background:#fff;margin:0}.next-error-h1{border-right:1px solid rgba(0,0,0,.3)}@media (prefers-color-scheme:dark){body{color:#fff;background:#000}.next-error-h1{border-right:1px solid rgba(255,255,255,.3)}}"}}],["$","h1",null,{"className":"next-error-h1","style":{"display":"inline-block","margin":"0 20px 0 0","padding":"0 23px 0 0","fontSize":24,"fontWeight":500,"verticalAlign":"top","lineHeight":"49px"},"children":404}],["$","div",null,{"style":{"display":"inline-block"},"children":["$","h2",null,{"style":{"fontSize":14,"fontWeight":400,"lineHeight":"49px","margin":0},"children":"This page could not be found."}]}]]}]}]],[]],"forbidden":"$undefined","unauthorized":"$undefined"}]]}]}]}]}]]}],{"children":[["$","$1","c",{"children":[null,["$","$L5",null,{"parallelRouterKey":"children","error":"$undefined","errorStyles":"$undefined","errorScripts":"$undefined","template":["$","$L6",null,{}],"templateStyles":"$undefined","templateScripts":"$undefined","notFound":"$undefined","forbidden":"$undefined","unauthorized":"$undefined"}]]}],{"children":[["$","$1","c",{"children":[["$","div",null,{"className":"min-h-screen bg-background text-foreground font-sans selection:bg-primary/20","children":[["$","div",null,{"className":"fixed inset-0 -z-10 h-full w-full bg-background bg-[radial-gradient(#2a2a2a_1px,transparent_1px)] [background-size:16px_16px] [mask-image:radial-gradient(ellipse_50%_50%_at_50%_50%,#000_70%,transparent_100%)] opacity-20 dark:opacity-40"}],["$","$7",null,{"fallback":["$","div",null,{"className":"container mx-auto py-8 text-center","children":"Loading tasks..."}],"children":["$","$L8",null,{"tasksData":[{"taskName":"aliased_association_include","instruction":"$9","trials":[{"job_name":"2026-05-29__01-01-50","trial_name":"aliased_association_include__HVSZmZt","model":"gpt-5.2-codex","rawModel":"openai/gpt-5.2-codex","agent":"Pochi","passed":true,"reward":1,"error":false,"latency_sec":1404.382,"latency_breakdown":{"env_setup":26.631,"agent_setup":20.158,"agent_exec":51.676,"verifier":8.973},"taskName":"aliased_association_include","jobId":"HVSZmZt","exec_duration":51.676},{"job_name":"2026-05-29__01-01-50","trial_name":"aliased_association_include__uWMWoKu","model":"gemini-3.1-pro","rawModel":"google/gemini-3.1-pro","agent":"Pochi","passed":true,"reward":1,"error":false,"latency_sec":1407.442,"latency_breakdown":{"env_setup":33.787,"agent_setup":20.464,"agent_exec":47.341,"verifier":15.446},"taskName":"aliased_association_include","jobId":"uWMWoKu","exec_duration":47.341},{"job_name":"2026-05-29__01-01-50","trial_name":"aliased_association_include__C4roRcw","model":"glm-4.7","rawModel":"zai/glm-4.7","agent":"Pochi","passed":false,"reward":0,"error":true,"latency_sec":1351.937,"latency_breakdown":{"env_setup":30.949,"agent_setup":21.34,"agent_exec":5.25,"verifier":0.829},"taskName":"aliased_association_include","jobId":"C4roRcw","exec_duration":5.25}]},{"taskName":"bulk_create_individual_hooks","instruction":"$a","trials":[{"job_name":"2026-05-29__01-01-50","trial_name":"bulk_create_individual_hooks__vrqUn2z","model":"glm-4.7","rawModel":"zai/glm-4.7","agent":"Pochi","passed":false,"reward":0,"error":true,"latency_sec":150.221,"latency_breakdown":{"env_setup":35.182,"agent_setup":19.837,"agent_exec":4.888,"verifier":73.131},"taskName":"bulk_create_individual_hooks","jobId":"vrqUn2z","exec_duration":4.888},{"job_name":"2026-05-29__01-01-50","trial_name":"bulk_create_individual_hooks__oCzBWEi","model":"gemini-3.1-pro","rawModel":"google/gemini-3.1-pro","agent":"Pochi","passed":false,"reward":0,"error":false,"latency_sec":184.008,"latency_breakdown":{"env_setup":62.623,"agent_setup":20.661,"agent_exec":82.79,"verifier":2.436},"taskName":"bulk_create_individual_hooks","jobId":"oCzBWEi","exec_duration":82.79},{"job_name":"2026-05-29__01-01-50","trial_name":"bulk_create_individual_hooks__bVs3FHW","model":"gpt-5.2-codex","rawModel":"openai/gpt-5.2-codex","agent":"Pochi","passed":false,"reward":0,"error":false,"latency_sec":143.175,"latency_breakdown":{"env_setup":23.917,"agent_setup":20.074,"agent_exec":58.371,"verifier":18.737},"taskName":"bulk_create_individual_hooks","jobId":"bVs3FHW","exec_duration":58.371}]},{"taskName":"nested_includes_filtered","instruction":"$b","trials":[{"job_name":"2026-05-29__01-01-50","trial_name":"nested_includes_filtered__zCdGRJM","model":"gemini-3.1-pro","rawModel":"google/gemini-3.1-pro","agent":"Pochi","passed":true,"reward":1,"error":false,"latency_sec":310.499,"latency_breakdown":{"env_setup":61.146,"agent_setup":21.528,"agent_exec":190.307,"verifier":15.275},"taskName":"nested_includes_filtered","jobId":"zCdGRJM","exec_duration":190.307},{"job_name":"2026-05-29__01-01-50","trial_name":"nested_includes_filtered__XnJcmzQ","model":"gpt-5.2-codex","rawModel":"openai/gpt-5.2-codex","agent":"Pochi","passed":true,"reward":1,"error":false,"latency_sec":209.485,"latency_breakdown":{"env_setup":95.578,"agent_setup":20.358,"agent_exec":57.291,"verifier":19.53},"taskName":"nested_includes_filtered","jobId":"XnJcmzQ","exec_duration":57.291},{"job_name":"2026-05-29__01-01-50","trial_name":"nested_includes_filtered__VzBCnu7","model":"glm-4.7","rawModel":"zai/glm-4.7","agent":"Pochi","passed":false,"reward":0,"error":true,"latency_sec":353.285,"latency_breakdown":{"env_setup":115.147,"agent_setup":19.617,"agent_exec":5.098,"verifier":195.57},"taskName":"nested_includes_filtered","jobId":"VzBCnu7","exec_duration":5.098}]}]}]}]]}],["$Lc","$Ld"],"$Le"]}],{},null,false,false]},null,false,false]},null,false,false],"$Lf",false]],"m":"$undefined","G":["$10",[]],"S":true}
+11:I[75049,["/sequelize-benchmark/pr-preview/pr-3/_next/static/chunks/d2c13bb33c4fcd54.js","/sequelize-benchmark/pr-preview/pr-3/_next/static/chunks/c21188132e0e0d48.js"],"OutletBoundary"]
+13:I[75049,["/sequelize-benchmark/pr-preview/pr-3/_next/static/chunks/d2c13bb33c4fcd54.js","/sequelize-benchmark/pr-preview/pr-3/_next/static/chunks/c21188132e0e0d48.js"],"ViewportBoundary"]
+15:I[75049,["/sequelize-benchmark/pr-preview/pr-3/_next/static/chunks/d2c13bb33c4fcd54.js","/sequelize-benchmark/pr-preview/pr-3/_next/static/chunks/c21188132e0e0d48.js"],"MetadataBoundary"]
+c:["$","script","script-0",{"src":"/sequelize-benchmark/pr-preview/pr-3/_next/static/chunks/67d4b3c35eb682b4.js","async":true,"nonce":"$undefined"}]
+d:["$","script","script-1",{"src":"/sequelize-benchmark/pr-preview/pr-3/_next/static/chunks/f9f579c42c486944.js","async":true,"nonce":"$undefined"}]
+e:["$","$L11",null,{"children":["$","$7",null,{"name":"Next.MetadataOutlet","children":"$@12"}]}]
+f:["$","$1","h",{"children":[null,["$","$L13",null,{"children":"$L14"}],["$","div",null,{"hidden":true,"children":["$","$L15",null,{"children":["$","$7",null,{"name":"Next.Metadata","children":"$L16"}]}]}],["$","meta",null,{"name":"next-size-adjust","content":""}]]}]
+14:[["$","meta","0",{"charSet":"utf-8"}],["$","meta","1",{"name":"viewport","content":"width=device-width, initial-scale=1"}]]
+12:null
+16:[["$","title","0",{"children":"Sequelize Benchmark"}],["$","meta","1",{"name":"description","content":"Performance results of AI coding models on Sequelize tasks, measuring success rate and execution time with high precision."}]]
