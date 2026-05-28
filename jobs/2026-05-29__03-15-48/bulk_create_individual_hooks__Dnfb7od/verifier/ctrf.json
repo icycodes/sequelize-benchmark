@@ -1,0 +1,61 @@
+{
+    "results": {
+        "tool": {
+            "name": "pytest",
+            "version": "7.4.4"
+        },
+        "summary": {
+            "tests": 3,
+            "passed": 0,
+            "failed": 3,
+            "skipped": 0,
+            "pending": 0,
+            "other": 0,
+            "start": 1779996070875,
+            "stop": 1779996085125
+        },
+        "environment": {
+            "buildName": "Pytest JSON CTRF Report",
+            "buildNumber": "000",
+            "buildUrl": "https://ctrf.io"
+        },
+        "tests": [
+            {
+                "name": "test_final_state.py::test_bulk_create_users",
+                "status": "failed",
+                "raw_status": "call_failed",
+                "duration": 14131,
+                "start": 1779996070961,
+                "stop": 1779996085092,
+                "retries": 0,
+                "file_path": "test_final_state.py",
+                "trace": "start_app = None\n\n    def test_bulk_create_users(start_app):\n        url = f\"{BASE_URL}/users/bulk\"\n        payload = [\n            {\"username\": \"Alice Smith\", \"password\": \"secret1\"},\n            {\"username\": \"Bob Jones\", \"password\": \"secret2\"}\n        ]\n        response = requests.post(url, json=payload)\n        assert response.status_code == 201, f\"Expected status 201, got {response.status_code}. Response: {response.text}\"\n    \n        users = response.json()\n        assert isinstance(users, list), \"Expected response to be a JSON array.\"\n        assert len(users) == 2, f\"Expected 2 users, got {len(users)}.\"\n    \n        # Check Alice\n        alice = next((u for u in users if u.get(\"username\") == \"Alice Smith\"), None)\n        assert alice is not None, \"Alice Smith not found in response.\"\n        assert alice.get(\"slug\") == \"alice-smith\", f\"Expected slug 'alice-smith', got {alice.get('slug')}\"\n        expected_hash_alice = \"2b5762858055627f12eb62a7407b7136c3400d3d57820a40f7f3e1b305ee8915\"\n>       assert alice.get(\"password\") == expected_hash_alice, f\"Expected hashed password {expected_hash_alice}, got {alice.get('password')}\"\nE       AssertionError: Expected hashed password 2b5762858055627f12eb62a7407b7136c3400d3d57820a40f7f3e1b305ee8915, got 5b11618c2e44027877d0cd0921ed166b9f176f50587fc91e7534dd2946db77d6\nE       assert '5b11618c2e44...4dd2946db77d6' == '2b5762858055...3e1b305ee8915'\nE         - 2b5762858055627f12eb62a7407b7136c3400d3d57820a40f7f3e1b305ee8915\nE         + 5b11618c2e44027877d0cd0921ed166b9f176f50587fc91e7534dd2946db77d6\n\ntests/test_final_state.py:54: AssertionError",
+                "message": "The test failed in the call phase due to an assertion error"
+            },
+            {
+                "name": "test_final_state.py::test_create_article_for_alice",
+                "status": "failed",
+                "raw_status": "call_failed",
+                "duration": 3,
+                "start": 1779996085092,
+                "stop": 1779996085095,
+                "retries": 0,
+                "file_path": "test_final_state.py",
+                "trace": "start_app = None\n\n    def test_create_article_for_alice(start_app):\n>       assert hasattr(pytest, \"alice_id\"), \"alice_id not set from previous test.\"\nE       AssertionError: alice_id not set from previous test.\nE       assert False\nE        +  where False = hasattr(pytest, 'alice_id')\n\ntests/test_final_state.py:67: AssertionError",
+                "message": "The test failed in the call phase due to an assertion error"
+            },
+            {
+                "name": "test_final_state.py::test_get_users_with_articles",
+                "status": "failed",
+                "raw_status": "call_failed",
+                "duration": 28,
+                "start": 1779996085096,
+                "stop": 1779996085124,
+                "retries": 0,
+                "file_path": "test_final_state.py",
+                "trace": "start_app = None\n\n    def test_get_users_with_articles(start_app):\n        url = f\"{BASE_URL}/users\"\n        response = requests.get(url)\n        assert response.status_code == 200, f\"Expected status 200, got {response.status_code}. Response: {response.text}\"\n    \n        users = response.json()\n        assert isinstance(users, list), \"Expected response to be a JSON array.\"\n    \n        alice = next((u for u in users if u.get(\"username\") == \"Alice Smith\"), None)\n        assert alice is not None, \"Alice Smith not found in users list.\"\n        assert \"articles\" in alice, \"Alice is missing 'articles' property.\"\n        assert isinstance(alice[\"articles\"], list), \"Alice's 'articles' property should be a list.\"\n>       assert len(alice[\"articles\"]) == 1, f\"Expected Alice to have 1 article, got {len(alice['articles'])}.\"\nE       AssertionError: Expected Alice to have 1 article, got 0.\nE       assert 0 == 1\nE        +  where 0 = len([])\n\ntests/test_final_state.py:87: AssertionError",
+                "message": "The test failed in the call phase due to an assertion error"
+            }
+        ]
+    }
+}
