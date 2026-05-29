@@ -1,0 +1,20 @@
+{
+  "users": [
+    {
+      "id": 1,
+      "name": "Ada Lovelace",
+      "auditLog": "Created via global hook",
+      "createdAt": "2026-05-28 22:46:53.603 +00:00",
+      "updatedAt": "2026-05-28 22:46:53.603 +00:00"
+    }
+  ],
+  "projects": [
+    {
+      "id": 1,
+      "title": "Sequelize Hooks",
+      "auditLog": "Created via local hook",
+      "createdAt": "2026-05-28 22:46:55.569 +00:00",
+      "updatedAt": "2026-05-28 22:46:55.569 +00:00"
+    }
+  ]
+}

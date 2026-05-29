@@ -1,0 +1,28 @@
+============================= test session starts ==============================
+platform linux -- Python 3.12.3, pytest-7.4.4, pluggy-1.4.0
+rootdir: /tests
+plugins: json-ctrf-0.5.0
+collected 3 items
+
+tests/test_final_state.py ...                                            [100%]
+
+==================================== PASSES ====================================
+____________________________ test_run_script_stdout ____________________________
+---------------------------- Captured stdout setup -----------------------------
+
+up to date, audited 140 packages in 829ms
+
+13 packages are looking for funding
+  run `npm fund` for details
+
+9 vulnerabilities (2 low, 2 moderate, 5 high)
+
+To address all issues (including breaking changes), run:
+  npm audit fix --force
+
+Run `npm audit` for details.
+=========================== short test summary info ============================
+PASSED tests/test_final_state.py::test_run_script_stdout
+PASSED tests/test_final_state.py::test_hooks_log_file
+PASSED tests/test_final_state.py::test_database_state
+============================== 3 passed in 9.33s ===============================

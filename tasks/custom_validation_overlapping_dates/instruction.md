@@ -1,0 +1,37 @@
+# Sequelize Custom Validation for Overlapping Dates
+
+## Background
+Build an Express API using Sequelize and SQLite to manage room reservations. You need to implement custom model validation to prevent overlapping date ranges.
+
+## Requirements
+- Initialize a Sequelize SQLite database.
+- Define a `Reservation` model with `roomId` (integer), `startDate` (date), and `endDate` (date).
+- Add a custom validation rule to the `Reservation` model that checks the database to ensure the new reservation's date range does not overlap with any existing reservation for the same `roomId`.
+- Implement an Express API to create and list reservations.
+
+## Implementation Hints
+- Use `sequelize.models` or the model class inside a custom validator to query the database and check for overlapping date ranges.
+- Two date ranges `(start1, end1)` and `(start2, end2)` overlap if `start1 < end2` and `end1 > start2`. Make sure to account for inclusive or exclusive boundaries as needed (e.g., using strictly less than or less than equal to).
+- Handle Sequelize validation errors in the Express route and return a 400 status with an appropriate error message.
+- Ensure `endDate` is strictly after `startDate`.
+
+## Acceptance Criteria
+- Project path: /home/user/project
+- Start command: node index.js
+- Port: 3000
+- API Endpoints:
+  - `POST /reservations`: Accepts a JSON payload and creates a reservation.
+    ```json
+    // Request
+    {
+      "roomId": number,
+      "startDate": "YYYY-MM-DD",
+      "endDate": "YYYY-MM-DD"
+    }
+    ```
+    - Returns 201 Created with the reservation object on success.
+    - Returns 400 Bad Request if the dates overlap with an existing reservation for the same room.
+    - Returns 400 Bad Request if `endDate` is not after `startDate`.
+  - `GET /reservations`: Lists all reservations.
+    - Returns 200 OK with a JSON array of all reservation objects.
+

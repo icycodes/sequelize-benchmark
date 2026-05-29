@@ -1,0 +1,18 @@
+{
+  "users": [
+    {
+      "id": 1,
+      "auditLog": "Created via global hook",
+      "createdAt": "2026-05-28T22:47:33.725Z",
+      "updatedAt": "2026-05-28T22:47:33.725Z"
+    }
+  ],
+  "projects": [
+    {
+      "id": 1,
+      "auditLog": "Created via local hook",
+      "createdAt": "2026-05-28T22:47:36.133Z",
+      "updatedAt": "2026-05-28T22:47:36.133Z"
+    }
+  ]
+}

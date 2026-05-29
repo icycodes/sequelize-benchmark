@@ -1,0 +1,115 @@
+{
+    "id": "77638033-9143-4347-b223-c4f98c3c1094",
+    "task_name": "transactional_bulk_hooks",
+    "trial_name": "transactional_bulk_hooks__DtHW9oq",
+    "trial_uri": "file:///home/icy/github/benchmark-run/jobs/2026-05-29__09-18-17/transactional_bulk_hooks__DtHW9oq",
+    "task_id": {
+        "path": "/home/icy/github/benchmark-run/local-scripts/../tasks/transactional_bulk_hooks"
+    },
+    "source": "tasks",
+    "task_checksum": "26f169c7e46da8e7067e45a1c2a333c6663212969d69257a57a3381a0d76e3c2",
+    "config": {
+        "task": {
+            "path": "/home/icy/github/benchmark-run/local-scripts/../tasks/transactional_bulk_hooks",
+            "git_url": null,
+            "git_commit_id": null,
+            "name": null,
+            "ref": null,
+            "overwrite": false,
+            "download_dir": null,
+            "source": "tasks"
+        },
+        "trial_name": "transactional_bulk_hooks__DtHW9oq",
+        "trials_dir": "/home/icy/github/benchmark-run/local-scripts/../jobs/2026-05-29__09-18-17",
+        "timeout_multiplier": 1.0,
+        "agent_timeout_multiplier": null,
+        "verifier_timeout_multiplier": null,
+        "agent_setup_timeout_multiplier": null,
+        "environment_build_timeout_multiplier": null,
+        "agent": {
+            "name": null,
+            "import_path": "agents.pochi:Pochi",
+            "model_name": "google/gemini-3.1-pro",
+            "skills": [],
+            "override_timeout_sec": null,
+            "override_setup_timeout_sec": null,
+            "max_timeout_sec": null,
+            "kwargs": {},
+            "env": {},
+            "mcp_servers": []
+        },
+        "environment": {
+            "type": "docker",
+            "import_path": null,
+            "force_build": false,
+            "delete": true,
+            "override_cpus": null,
+            "override_memory_mb": null,
+            "override_storage_mb": null,
+            "override_gpus": null,
+            "suppress_override_warnings": false,
+            "mounts": [
+                {
+                    "type": "bind",
+                    "source": "test_initial_state.py",
+                    "target": "/bootstrap/test_initial_state.py"
+                }
+            ],
+            "extra_docker_compose": [],
+            "env": {},
+            "kwargs": {}
+        },
+        "verifier": {
+            "override_timeout_sec": null,
+            "max_timeout_sec": null,
+            "env": {},
+            "disable": false
+        },
+        "artifacts": [
+            "/home/user"
+        ],
+        "extra_instruction_paths": [],
+        "job_id": "2af929a1-f7a3-44d9-b59e-6089330e3b31"
+    },
+    "agent_info": {
+        "name": "pochi",
+        "version": "0.6.12",
+        "model_info": {
+            "name": "gemini-3.1-pro",
+            "provider": "google"
+        }
+    },
+    "agent_result": {
+        "n_input_tokens": 0,
+        "n_cache_tokens": 0,
+        "n_output_tokens": 13631,
+        "cost_usd": null,
+        "rollout_details": null,
+        "metadata": null
+    },
+    "verifier_result": {
+        "rewards": {
+            "reward": 1.0
+        }
+    },
+    "exception_info": null,
+    "started_at": "2026-05-29T01:44:12.569172Z",
+    "finished_at": "2026-05-29T02:07:12.853319Z",
+    "environment_setup": {
+        "started_at": "2026-05-29T01:44:12.605107Z",
+        "finished_at": "2026-05-29T01:45:01.035199Z"
+    },
+    "agent_setup": {
+        "started_at": "2026-05-29T01:45:01.035232Z",
+        "finished_at": "2026-05-29T01:45:22.971687Z"
+    },
+    "agent_execution": {
+        "started_at": "2026-05-29T01:45:22.971808Z",
+        "finished_at": "2026-05-29T01:46:26.473530Z"
+    },
+    "verifier": {
+        "started_at": "2026-05-29T02:06:46.218066Z",
+        "finished_at": "2026-05-29T02:06:52.658813Z"
+    },
+    "step_results": null
+}

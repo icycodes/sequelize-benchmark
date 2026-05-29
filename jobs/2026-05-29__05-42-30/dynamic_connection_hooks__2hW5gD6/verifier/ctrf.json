@@ -1,0 +1,58 @@
+{
+    "results": {
+        "tool": {
+            "name": "pytest",
+            "version": "7.4.4"
+        },
+        "summary": {
+            "tests": 3,
+            "passed": 1,
+            "failed": 2,
+            "skipped": 0,
+            "pending": 0,
+            "other": 0,
+            "start": 1780007976024,
+            "stop": 1780007978693
+        },
+        "environment": {
+            "buildName": "Pytest JSON CTRF Report",
+            "buildNumber": "000",
+            "buildUrl": "https://ctrf.io"
+        },
+        "tests": [
+            {
+                "name": "test_final_state.py::test_script_execution_output",
+                "status": "failed",
+                "raw_status": "call_failed",
+                "duration": 2652,
+                "start": 1780007976036,
+                "stop": 1780007978688,
+                "retries": 0,
+                "file_path": "test_final_state.py",
+                "trace": "setup_environment = CompletedProcess(args=['node', 'index.js'], returncode=0, stdout='Connected with password: \\n', stderr='')\n\n    def test_script_execution_output(setup_environment):\n        \"\"\"Verify that the script runs successfully and prints the correct password.\"\"\"\n        result = setup_environment\n        assert result.returncode == 0, f\"Script execution failed: {result.stderr}\"\n        expected_output = f\"Connected with password: {EXPECTED_TOKEN}\"\n>       assert expected_output in result.stdout, \\\n            f\"Expected to find '{expected_output}' in stdout, got: {result.stdout}\"\nE       AssertionError: Expected to find 'Connected with password: secret_token_123' in stdout, got: Connected with password: \nE         \nE       assert 'Connected with password: secret_token_123' in 'Connected with password: \\n'\nE        +  where 'Connected with password: \\n' = CompletedProcess(args=['node', 'index.js'], returncode=0, stdout='Connected with password: \\n', stderr='').stdout\n\ntests/test_final_state.py:39: AssertionError",
+                "message": "The test failed in the call phase due to an assertion error"
+            },
+            {
+                "name": "test_final_state.py::test_database_file_exists",
+                "status": "passed",
+                "duration": 1,
+                "start": 1780007978688,
+                "stop": 1780007978689,
+                "retries": 0,
+                "file_path": "test_final_state.py"
+            },
+            {
+                "name": "test_final_state.py::test_user_inserted_in_database",
+                "status": "failed",
+                "raw_status": "call_failed",
+                "duration": 3,
+                "start": 1780007978690,
+                "stop": 1780007978693,
+                "retries": 0,
+                "file_path": "test_final_state.py",
+                "trace": "def test_user_inserted_in_database():\n        \"\"\"Verify that the user 'alice' was inserted into the database.\"\"\"\n        # We use Python's built-in sqlite3 to verify the data\n        conn = sqlite3.connect(DB_PATH)\n        cursor = conn.cursor()\n    \n        # Find all table names to handle case sensitivity (e.g. Users vs users)\n        cursor.execute(\"SELECT name FROM sqlite_master WHERE type='table';\")\n        tables = [row[0].lower() for row in cursor.fetchall()]\n    \n        assert \"users\" in tables, \"Table 'Users' or 'users' not found in the database.\"\n    \n        # Query for alice, ignoring case on table name by finding the exact table name\n        cursor.execute(\"SELECT name FROM sqlite_master WHERE type='table' COLLATE NOCASE AND name='users';\")\n>       table_name = cursor.fetchone()[0]\nE       TypeError: 'NoneType' object is not subscriptable\n\ntests/test_final_state.py:60: TypeError",
+                "message": "The test failed in the call phase"
+            }
+        ]
+    }
+}

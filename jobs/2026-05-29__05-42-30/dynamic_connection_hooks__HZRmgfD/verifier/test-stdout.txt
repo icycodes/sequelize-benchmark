@@ -1,0 +1,49 @@
+============================= test session starts ==============================
+platform linux -- Python 3.12.3, pytest-7.4.4, pluggy-1.4.0
+rootdir: /tests
+plugins: json-ctrf-0.5.0
+collected 3 items
+
+tests/test_final_state.py ..F                                            [100%]
+
+=================================== FAILURES ===================================
+________________________ test_user_inserted_in_database ________________________
+
+    def test_user_inserted_in_database():
+        """Verify that the user 'alice' was inserted into the database."""
+        # We use Python's built-in sqlite3 to verify the data
+        conn = sqlite3.connect(DB_PATH)
+        cursor = conn.cursor()
+    
+        # Find all table names to handle case sensitivity (e.g. Users vs users)
+        cursor.execute("SELECT name FROM sqlite_master WHERE type='table';")
+        tables = [row[0].lower() for row in cursor.fetchall()]
+    
+        assert "users" in tables, "Table 'Users' or 'users' not found in the database."
+    
+        # Query for alice, ignoring case on table name by finding the exact table name
+        cursor.execute("SELECT name FROM sqlite_master WHERE type='table' COLLATE NOCASE AND name='users';")
+>       table_name = cursor.fetchone()[0]
+E       TypeError: 'NoneType' object is not subscriptable
+
+tests/test_final_state.py:60: TypeError
+==================================== PASSES ====================================
+_________________________ test_script_execution_output _________________________
+---------------------------- Captured stdout setup -----------------------------
+
+up to date, audited 79 packages in 1s
+
+12 packages are looking for funding
+  run `npm fund` for details
+
+2 moderate severity vulnerabilities
+
+To address all issues (including breaking changes), run:
+  npm audit fix --force
+
+Run `npm audit` for details.
+=========================== short test summary info ============================
+PASSED tests/test_final_state.py::test_script_execution_output
+PASSED tests/test_final_state.py::test_database_file_exists
+FAILED tests/test_final_state.py::test_user_inserted_in_database - TypeError:...
+========================= 1 failed, 2 passed in 4.78s ==========================

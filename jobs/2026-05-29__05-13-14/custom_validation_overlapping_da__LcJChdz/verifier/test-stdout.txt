@@ -1,0 +1,17 @@
+============================= test session starts ==============================
+platform linux -- Python 3.12.3, pytest-7.4.4, pluggy-1.4.0
+rootdir: /tests
+plugins: json-ctrf-0.5.0, xprocess-1.0.2
+collected 1 item
+
+tests/test_final_state.py .                                              [100%]
+
+==================================== PASSES ====================================
+____________________________ test_api_reservations _____________________________
+---------------------------- Captured stdout setup -----------------------------
+/tests/.pytest_cache/d/.xprocess/start_app$ node index.js
+process 'start_app' started pid=1050
+start_app process startup detected
+=========================== short test summary info ============================
+PASSED tests/test_final_state.py::test_api_reservations
+============================== 1 passed in 0.49s ===============================

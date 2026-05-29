@@ -1,0 +1,55 @@
+{
+    "results": {
+        "tool": {
+            "name": "pytest",
+            "version": "7.4.4"
+        },
+        "summary": {
+            "tests": 3,
+            "passed": 2,
+            "failed": 1,
+            "skipped": 0,
+            "pending": 0,
+            "other": 0,
+            "start": 1780008106674,
+            "stop": 1780008109762
+        },
+        "environment": {
+            "buildName": "Pytest JSON CTRF Report",
+            "buildNumber": "000",
+            "buildUrl": "https://ctrf.io"
+        },
+        "tests": [
+            {
+                "name": "test_final_state.py::test_script_execution_output",
+                "status": "passed",
+                "duration": 3049,
+                "start": 1780008106686,
+                "stop": 1780008109735,
+                "retries": 0,
+                "file_path": "test_final_state.py"
+            },
+            {
+                "name": "test_final_state.py::test_database_file_exists",
+                "status": "passed",
+                "duration": 1,
+                "start": 1780008109736,
+                "stop": 1780008109737,
+                "retries": 0,
+                "file_path": "test_final_state.py"
+            },
+            {
+                "name": "test_final_state.py::test_user_inserted_in_database",
+                "status": "failed",
+                "raw_status": "call_failed",
+                "duration": 24,
+                "start": 1780008109738,
+                "stop": 1780008109762,
+                "retries": 0,
+                "file_path": "test_final_state.py",
+                "trace": "def test_user_inserted_in_database():\n        \"\"\"Verify that the user 'alice' was inserted into the database.\"\"\"\n        # We use Python's built-in sqlite3 to verify the data\n        conn = sqlite3.connect(DB_PATH)\n        cursor = conn.cursor()\n    \n        # Find all table names to handle case sensitivity (e.g. Users vs users)\n        cursor.execute(\"SELECT name FROM sqlite_master WHERE type='table';\")\n        tables = [row[0].lower() for row in cursor.fetchall()]\n    \n        assert \"users\" in tables, \"Table 'Users' or 'users' not found in the database.\"\n    \n        # Query for alice, ignoring case on table name by finding the exact table name\n        cursor.execute(\"SELECT name FROM sqlite_master WHERE type='table' COLLATE NOCASE AND name='users';\")\n>       table_name = cursor.fetchone()[0]\nE       TypeError: 'NoneType' object is not subscriptable\n\ntests/test_final_state.py:60: TypeError",
+                "message": "The test failed in the call phase"
+            }
+        ]
+    }
+}

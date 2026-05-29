@@ -1,0 +1,7 @@
+{
+  "library_name": "Sequelize",
+  "task_name": "global_default_hooks",
+  "complexity_level": "multi-step sequential command set",
+  "research_plan_path": "plan.md",
+  "output_dir": "tasks/"
+}

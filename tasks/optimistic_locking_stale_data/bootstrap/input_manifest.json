@@ -1,0 +1,7 @@
+{
+  "library_name": "Sequelize",
+  "task_name": "optimistic_locking_stale_data",
+  "complexity_level": "multi-step sequential command set",
+  "research_plan_path": "plan.md",
+  "output_dir": "tasks/"
+}
