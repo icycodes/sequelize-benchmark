@@ -1,7 +1,7 @@
 1:"$Sreact.fragment"
 2:"$Sreact.suspense"
 3:I[42654,["/sequelize-benchmark/pr-preview/pr-3/_next/static/chunks/babff0e7418ab052.js","/sequelize-benchmark/pr-preview/pr-3/_next/static/chunks/3ecbb78a8ff87549.js","/sequelize-benchmark/pr-preview/pr-3/_next/static/chunks/67d4b3c35eb682b4.js","/sequelize-benchmark/pr-preview/pr-3/_next/static/chunks/f9f579c42c486944.js"],"TasksPageClient"]
-1d:I[75049,["/sequelize-benchmark/pr-preview/pr-3/_next/static/chunks/d2c13bb33c4fcd54.js","/sequelize-benchmark/pr-preview/pr-3/_next/static/chunks/c21188132e0e0d48.js"],"OutletBoundary"]
+14:I[75049,["/sequelize-benchmark/pr-preview/pr-3/_next/static/chunks/d2c13bb33c4fcd54.js","/sequelize-benchmark/pr-preview/pr-3/_next/static/chunks/c21188132e0e0d48.js"],"OutletBoundary"]
 4:T90e,# Advanced Association Scopes and Nested Includes
 
 ## Background
@@ -100,64 +100,7 @@ You need to build a small script using Sequelize and SQLite to manage `Person` a
 - The stdout should print the fetched mail's information in exactly this format: `Result: Alice sent "Hello" to Bob`
 - The database file `./database.sqlite` must be created and contain the correct tables and foreign keys.
 
-7:Ta41,# Sequelize Bulk Operations and Associations API
-
-## Background
-You are building a backend service using Express.js, Sequelize, and SQLite. You need to implement bulk data insertion and eager loading of associations, addressing common Sequelize friction points such as hooks not firing on bulk operations and the "Include unexpected" error.
-
-## Requirements
-- Create two Sequelize models: `User` (`username`, `password`, `slug`) and `Article` (`title`, `content`).
-- Define an association where a `User` has many `Article`s. You must alias this association as `articles`.
-- Implement a `beforeCreate` hook on the `User` model that:
-  1. Hashes the `password` using SHA-256 (use Node's built-in `crypto` module and output as a hex string).
-  2. Generates a `slug` based on the `username` (convert to lowercase and replace any spaces with hyphens).
-- Implement an Express REST API with the following endpoints:
-  - `POST /users/bulk`: Accepts an array of user objects. Uses Sequelize's `bulkCreate` to insert them. You must ensure the `beforeCreate` hook is triggered for each record.
-  - `POST /users/:id/articles`: Creates a new article associated with the specified user ID.
-  - `GET /users`: Fetches all users and eagerly loads their associated articles. You must query this correctly to avoid the Sequelize "Include unexpected" error.
-- Store data in a SQLite database file named `database.sqlite`.
-
-## Implementation Hints
-- Use Express routing and middleware to parse JSON requests.
-- Initialize Sequelize with the `sqlite` dialect and sync the models on server startup.
-- Remember that `bulkCreate` does not run individual model hooks by default; you must configure it via options.
-- When querying with `include`, if an alias (`as`) was defined in the association, you must provide the exact same alias or the model with the alias in the `include` array to avoid errors.
-- Use `crypto.createHash('sha256').update(text).digest('hex')` for hashing.
-
-## Acceptance Criteria
-- Project path: /home/user/myproject
-- Start command: node index.js
-- Port: 3000
-- API Endpoints:
-  - `POST /users/bulk`: Accepts a JSON array of users `[{"username": "string", "password": "string"}]` and returns `201 Created` with the created user objects (must include `id`, `username`, `password` (hashed), and `slug`).
-  - `POST /users/:id/articles`: Accepts a JSON object `{"title": "string", "content": "string"}` and returns `201 Created` with the created article object.
-  - `GET /users`: Returns `200 OK` with a JSON array of all users. Each user object must contain an `articles` property which is an array of their associated articles.
-
-8:T651,# Sequelize Bulk Update with Individual Hooks
-
-## Background
-In Sequelize, bulk operations like `Model.update()` with a `where` clause do not trigger model lifecycle hooks by default for performance reasons. You need to write a script that performs a bulk update and ensures that a specific hook is fired for each record.
-
-## Requirements
-- Initialize a Sequelize instance with SQLite.
-- Define a `User` model with `username` (STRING), `status` (STRING), and `lastActivatedAt` (DATE).
-- Implement a `beforeUpdate` hook on the `User` model. If the `status` is being changed to 'active', the hook must set `lastActivatedAt` to the current date/time.
-- Write a script that uses `User.update()` to change the `status` of all users currently in 'pending' status to 'active'.
-- The script must ensure that the `beforeUpdate` hook is triggered for each user during this bulk update operation.
-
-## Implementation Hints
-- Define the Sequelize connection and the `User` model in your script.
-- Look into the options available for `Model.update()` to enable individual hooks, as they are disabled by default for bulk operations.
-- Ensure the database file is located at `./database.sqlite`.
-
-## Acceptance Criteria
-- Project path: /home/user/project
-- Command: `node update_users.js`
-- The command must execute without errors and print `Updated users successfully` to stdout.
-- After the command runs, all users that previously had a 'pending' status must have an 'active' status.
-- Crucially, the `lastActivatedAt` field for these updated users must be populated with a valid date/time (not null), proving the hook was fired.
-
-9:T85b,# Cascading Soft Deletes with Sequelize Hooks
+7:T85b,# Cascading Soft Deletes with Sequelize Hooks
 
 ## Background
 In Sequelize, the `paranoid` option allows for soft deletes (setting a `deletedAt` timestamp instead of physically removing the record). However, soft deletes do not automatically cascade to associated models. You need to implement an Express API using Sequelize and SQLite where deleting a parent record soft-deletes its children, and restoring the parent restores its children.
@@ -187,7 +130,7 @@ In Sequelize, the `paranoid` option allows for soft deletes (setting a `deletedA
   - POST `/users/:id/restore`: Restores the soft-deleted user and their posts, returning 200 OK.
   - GET `/posts/:id`: Returns 200 with the post object if it exists and is not soft-deleted. Returns 404 if the post does not exist or is soft-deleted.
 
-a:T7f4,# Complex Many-to-Many Association with Custom Junction Table
+8:T7f4,# Complex Many-to-Many Association with Custom Junction Table
 
 ## Background
 In Sequelize, Many-to-Many (N:M) associations connect one source with multiple targets, and vice versa. Sometimes the junction table needs to hold additional information beyond the foreign keys. In this task, you will implement a Many-to-Many relationship with a custom junction table using Sequelize and SQLite.
@@ -225,7 +168,7 @@ In Sequelize, Many-to-Many (N:M) associations connect one source with multiple t
     ]
     ```
 
-b:T7d4,# Sequelize Composite Primary Key and Upsert
+9:T7d4,# Sequelize Composite Primary Key and Upsert
 
 ## Background
 Create a simple REST API using Express.js and Sequelize (with SQLite) to manage user role assignments. The assignments use a composite primary key to ensure a user can only have a specific role once, but the assignment details can be updated.
@@ -277,71 +220,7 @@ Create a simple REST API using Express.js and Sequelize (with SQLite) to manage 
     }
     ```
 
-c:T750,# Sequelize Custom Validation for Overlapping Dates
-
-## Background
-Build an Express API using Sequelize and SQLite to manage room reservations. You need to implement custom model validation to prevent overlapping date ranges.
-
-## Requirements
-- Initialize a Sequelize SQLite database.
-- Define a `Reservation` model with `roomId` (integer), `startDate` (date), and `endDate` (date).
-- Add a custom validation rule to the `Reservation` model that checks the database to ensure the new reservation's date range does not overlap with any existing reservation for the same `roomId`.
-- Implement an Express API to create and list reservations.
-
-## Implementation Hints
-- Use `sequelize.models` or the model class inside a custom validator to query the database and check for overlapping date ranges.
-- Two date ranges `(start1, end1)` and `(start2, end2)` overlap if `start1 < end2` and `end1 > start2`. Make sure to account for inclusive or exclusive boundaries as needed (e.g., using strictly less than or less than equal to).
-- Handle Sequelize validation errors in the Express route and return a 400 status with an appropriate error message.
-- Ensure `endDate` is strictly after `startDate`.
-
-## Acceptance Criteria
-- Project path: /home/user/project
-- Start command: node index.js
-- Port: 3000
-- API Endpoints:
-  - `POST /reservations`: Accepts a JSON payload and creates a reservation.
-    ```json
-    // Request
-    {
-      "roomId": number,
-      "startDate": "YYYY-MM-DD",
-      "endDate": "YYYY-MM-DD"
-    }
-    ```
-    - Returns 201 Created with the reservation object on success.
-    - Returns 400 Bad Request if the dates overlap with an existing reservation for the same room.
-    - Returns 400 Bad Request if `endDate` is not after `startDate`.
-  - `GET /reservations`: Lists all reservations.
-    - Returns 200 OK with a JSON array of all reservation objects.
-
-d:T776,# Sequelize Dynamic Connection Hooks
-
-## Background
-Sequelize provides connection hooks (`beforeConnect`, `afterConnect`, etc.) that are executed immediately before and after a database connection is obtained. These hooks are useful for asynchronously obtaining database credentials (e.g., from a rotating token store) and mutating the configuration object before the connection is established.
-
-## Requirements
-- Create a Node.js script that initializes a Sequelize instance using the SQLite dialect.
-- Implement a `beforeConnect` hook on the Sequelize instance.
-- In the `beforeConnect` hook, asynchronously read the database password from a local file named `token.txt` and assign it to the `config.password` property.
-- Define a `User` model with a `username` string field.
-- Synchronize the model and insert a new user with the username `alice`.
-- Print a confirmation message to stdout containing the dynamically loaded password.
-
-## Implementation Hints
-- Use `sequelize.beforeConnect(async (config) => { ... })` to define the hook.
-- Use Node.js `fs.promises.readFile` to asynchronously read the contents of `token.txt` inside the hook.
-- Although SQLite does not strictly require a password, mutating `config.password` demonstrates the pattern used for other dialects (like Postgres or MySQL).
-- Ensure the database is synchronized (e.g., using `await sequelize.sync()`) before creating the user.
-
-## Acceptance Criteria
-- Project path: /home/user/myproject
-- Command: node index.js
-- The script must read the password from `token.txt` and use it in the connection hook.
-- The stdout should print: `Connected with password: <password>` where `<password>` is the exact string read from `token.txt`.
-- The script must create a SQLite database file at `/home/user/myproject/database.sqlite`.
-- The database must contain a `Users` (or `users`) table with at least one record where `username` is `alice`.
-
-e:T8aa,# Super Many-to-Many Eager Loading
+a:T8aa,# Super Many-to-Many Eager Loading
 
 ## Background
 In Sequelize, a "Super Many-to-Many" relationship involves two primary models connected through a junction model, where the junction model itself has its own associations (e.g., it belongs to a third model). Eager loading data from the junction model's associations requires setting up the relationships correctly and using nested `include` statements.
@@ -370,7 +249,7 @@ In Sequelize, a "Super Many-to-Many" relationship involves two primary models co
 - The command must execute without errors.
 - The stdout should print the JSON representation of the student.
 - The JSON must include the student's properties, an array of courses, and within each course's junction object (representing the enrollment), the corresponding `Semester` object.
-f:T947,# Sequelize Hooks and Internal Transactions
+b:T947,# Sequelize Hooks and Internal Transactions
 
 ## Background
 Sequelize may use transactions internally for operations like `Model.findOrCreate`. If your hook functions execute read or write operations that need to be atomic with the main operation, you must explicitly pass the transaction object to those operations.
@@ -397,68 +276,7 @@ Sequelize may use transactions internally for operations like `Model.findOrCreat
 - Successful creation: Calling `runFindOrCreate('normal_user')` creates both a `User` and an `AuditLog`.
 - Transaction rollback: Calling `runFindOrCreate('error_user')` throws/returns an error. The `AuditLog` for `'error_user'` must **not** exist in the database because the transaction was rolled back.
 
-10:T6df,# Sequelize Global Default Hooks
-
-## Background
-In Sequelize, you can define global hooks that apply to all models unless overridden. This is useful for automatically setting custom timestamp formats or audit fields across your entire application without defining them on every single model.
-
-## Requirements
-- Create a Node.js script that initializes a Sequelize instance with SQLite.
-- Configure a global default `beforeCreate` hook on the Sequelize constructor (using the `define` option) that automatically sets a custom field `auditLog` to the string `"Created via global hook"` on any model being created.
-- Define two models: `User` and `Project`.
-- The `Project` model should override the `beforeCreate` hook and set `auditLog` to `"Created via local hook"`.
-- Create one `User` and one `Project` record and save them to the database.
-- Write the resulting records to a JSON file.
-
-## Implementation Hints
-- Use the `define` option in the `Sequelize` constructor to add default hooks.
-- Ensure both models have an `auditLog` string column defined.
-- Remember to sync the database before creating records.
-- Write the output of `User.findAll()` and `Project.findAll()` to `output.json`.
-
-## Acceptance Criteria
-- Project path: /home/user/myproject
-- Ensure the script is executed and the artifacts exist.
-- Command: `node index.js`
-- The script must create a SQLite database file at `/home/user/myproject/database.sqlite`.
-- Log file: /home/user/myproject/output.json
-- The `output.json` file must contain an object with a `users` array and a `projects` array.
-- The `User` record in `output.json` must have `auditLog` set to `"Created via global hook"`.
-- The `Project` record in `output.json` must have `auditLog` set to `"Created via local hook"`.
-
-11:T7d2,# Many-to-Many Bulk Hooks with Sequelize
-
-## Background
-In Sequelize, when using the `add` or `remove` mixin methods for `belongsToMany` relationships (Many-to-Many), the records are added to or removed from the junction table. Sequelize triggers `beforeBulkCreate` (or `beforeBulkDestroy`) hooks on the junction model during these bulk operations.
-
-## Requirements
-- Create a Many-to-Many association between `User` and `Role` models using a custom junction model `UserRole`.
-- The `UserRole` junction model must have a `beforeBulkCreate` hook that appends the text `Triggered beforeBulkCreate` to a file named `hooks.log`.
-- The `UserRole` junction model must have a `beforeBulkDestroy` hook that appends the text `Triggered beforeBulkDestroy` to the same `hooks.log` file.
-- Implement a script (`run.js`) that:
-  1. Syncs the database.
-  2. Creates a user and two roles.
-  3. Uses the `addRoles` mixin method to assign both roles to the user.
-  4. Uses the `removeRole` mixin method to remove one role from the user.
-  5. Prints `Operations completed` to stdout when finished.
-
-## Implementation Hints
-- Define three models: `User`, `Role`, and `UserRole`.
-- Set up the Many-to-Many association using `User.belongsToMany(Role, { through: UserRole })` and `Role.belongsToMany(User, { through: UserRole })`.
-- Add the `beforeBulkCreate` and `beforeBulkDestroy` hooks to the `UserRole` model.
-- Write the log entries by appending to `hooks.log` using Node's `fs` module.
-- Use SQLite as the database, storing it in `database.sqlite`.
-
-## Acceptance Criteria
-- Project path: /home/user/myproject
-- Command: node run.js
-- The command takes no arguments.
-- The stdout should print: `Operations completed`
-- The script must create a SQLite database file at `/home/user/myproject/database.sqlite`.
-- The script must write to a log file at `/home/user/myproject/hooks.log` inside the hooks.
-- The `hooks.log` file must contain the exact lines `Triggered beforeBulkCreate` and `Triggered beforeBulkDestroy`.
-
-12:T7f8,# Sequelize Migration: Add Column, Backfill Data, and Add Foreign Key
+c:T7f8,# Sequelize Migration: Add Column, Backfill Data, and Add Foreign Key
 
 ## Background
 In this task, you will write a Sequelize migration script to safely add a new column to an existing table, backfill it with default data, and then add a foreign key constraint to it. This is a common real-world scenario when evolving a database schema.
@@ -488,7 +306,7 @@ In this task, you will write a Sequelize migration script to safely add a new co
 - The `departmentId` column must have a foreign key constraint referencing `Departments(id)`.
 - Executing `npx sequelize-cli db:migrate:undo` must successfully revert the migration, removing the column and constraint.
 
-13:T9de,# Sequelize Nested Includes and Filtering
+d:T9de,# Sequelize Nested Includes and Filtering
 
 ## Background
 Create an Express REST API using Sequelize and SQLite to manage Companies, Departments, and Employees. The API needs a complex query to fetch companies with deeply nested and filtered associations.
@@ -537,37 +355,7 @@ Create an Express REST API using Sequelize and SQLite to manage Companies, Depar
 
   - GET `/companies/filtered`: Returns status 200 and a JSON array of company objects. The JSON structure should match the seed payload, but strictly filtered according to the requirements.
 
-14:T6d7,# Sequelize Optimistic Locking Error Handling
-
-## Background
-Optimistic locking is a concurrency control method that uses a version number to prevent conflicting updates. Sequelize supports this via the `version: true` option on a model. When a stale instance is saved, Sequelize throws an `OptimisticLockError`.
-
-## Requirements
-- Create a Node.js script that uses Sequelize with SQLite to demonstrate optimistic locking and conflict resolution.
-- Define a `Wallet` model with a `balance` (INTEGER) field and enable optimistic locking.
-- The script should accept three integer arguments: `<initial_balance>`, `<amount1>`, and `<amount2>`.
-- It should sync the database and create a new `Wallet` with the `<initial_balance>`.
-- It must then simulate a concurrent update:
-  - Fetch the wallet instance (`wallet1`).
-  - Fetch the wallet instance again (`wallet2`).
-  - Increase `wallet1`'s balance by `<amount1>` and save it.
-  - Attempt to increase `wallet2`'s balance by `<amount2>` and save it.
-  - Catch the resulting `OptimisticLockError`.
-  - In the error handler, re-fetch the wallet, apply the `<amount2>` addition to the newly fetched balance, and save it.
-- Print the final balance to stdout.
-
-## Implementation Hints
-- Use `version: true` in the model definition options to enable optimistic locking.
-- You will need to import `OptimisticLockError` from Sequelize to catch the specific error.
-- Use `process.argv` to read the CLI arguments.
-
-## Acceptance Criteria
-- Project path: /home/user/project
-- Command: `node optimistic_transfer.js <initial_balance> <amount1> <amount2>`
-- The stdout should print: `Final balance: <balance>`
-- The script must successfully handle the `OptimisticLockError` and apply both updates without losing data.
-
-15:T7de,# Sequelize Paranoid Models: Soft Delete and Restore
+e:T7de,# Sequelize Paranoid Models: Soft Delete and Restore
 
 ## Background
 Sequelize provides a `paranoid` option for models, which enables soft deletes. Instead of permanently removing a record from the database, a `deletedAt` timestamp is set. You need to implement a CLI script that manages users with soft delete functionality.
@@ -602,7 +390,7 @@ Sequelize provides a `paranoid` option for models, which enables soft deletes. I
   - `list`: Prints a JSON array of active users to stdout (e.g., `[{"id": 1, "username": "alice", "deletedAt": null}]`).
   - `list-all`: Prints a JSON array of all users to stdout, including soft-deleted ones (where `deletedAt` is not null).
 
-16:T73a,# Refactor Sequelize Sync to Migrations
+f:T73a,# Refactor Sequelize Sync to Migrations
 
 ## Background
 In development, developers often use `sequelize.sync({ force: true })` to quickly apply model changes to the database. However, this is highly dangerous in production as it drops and recreates tables, leading to data loss. The best practice is to use `sequelize-cli` to manage database schema changes via migrations.
@@ -631,7 +419,7 @@ You have an existing Express application that uses Sequelize with SQLite. The ap
   - GET `/users`: Returns status 200 and a JSON array of user objects.
   - POST `/users`: Accepts JSON `{"username": "string"}` and returns 201 Created with the new user object.
 
-17:T902,# Sequelize Hooks for Slug Generation
+10:T902,# Sequelize Hooks for Slug Generation
 
 ## Background
 Create an Express REST API with Sequelize and SQLite that automatically generates slugs for articles using Sequelize lifecycle hooks. This task evaluates your ability to properly configure model hooks for both single and bulk operations.
@@ -695,66 +483,8 @@ Create an Express REST API with Sequelize and SQLite that automatically generate
     ]
     ```
 
-18:T711,# Sequelize Transaction Rollback on Hook Failure
-
-## Background
-When performing bulk operations in Sequelize, individual model hooks (like `beforeCreate`) do not fire by default. If you enable `individualHooks: true` and execute the bulk operation within a transaction, an error thrown by any individual hook should cause the entire transaction to roll back, preventing partial inserts.
-
-## Requirements
-- Initialize a Sequelize instance using SQLite.
-- Define a `User` model with a `username` (String) field.
-- Add a `beforeCreate` hook to the `User` model that throws an Error if the `username` is exactly `"admin"`.
-- Write a script that first synchronizes the database (e.g., using `sync({ force: true })`).
-- Then, within a managed transaction, attempt to `bulkCreate` an array of three users: `[{username: 'user1'}, {username: 'admin'}, {username: 'user2'}]`.
-- You must explicitly enable individual hooks for the bulk operation so the hook fires.
-- Catch the expected error from the hook.
-- Query the database for the total number of users and print it to stdout.
-
-## Implementation Hints
-- Use `new Sequelize({ dialect: 'sqlite', storage: './database.sqlite' })` to initialize the connection.
-- Use `sequelize.transaction(async (t) => { ... })` for a managed transaction.
-- Pass both `{ transaction: t, individualHooks: true }` to the `bulkCreate` call.
-- Wrap the transaction block in a try/catch to handle the hook error gracefully.
-- After the try/catch block, use `User.count()` to get the final number of records in the table.
-
-## Acceptance Criteria
-- Project path: /home/user/myproject
-- Command: `node index.js`
-- The stdout should print the final user count in the format: `User count: <count>`
-- The database should contain no users because the transaction rolled back upon the hook error.
-
-19:T852,# Sequelize Transactional Bulk Hooks
-
-## Background
-You need to perform bulk operations using Sequelize while ensuring that model lifecycle hooks are triggered and all operations are safely wrapped within a single transaction. By default, Sequelize does not trigger individual hooks on bulk operations for performance reasons, and transactions must be explicitly passed to hooks if internal operations are performed.
-
-## Requirements
-- Create a Node.js script that connects to a SQLite database.
-- Define a `User` model with `username` (STRING), `password` (STRING), and `status` (STRING, default 'pending').
-- Add a `beforeCreate` hook that modifies the password by appending `-hashed` to it.
-- Add a `beforeUpdate` hook that modifies the status by appending `-updated` to it.
-- The script must accept a JSON string of users as a command-line argument.
-- The script must use a managed transaction to:
-  1. Insert the users using `bulkCreate`, ensuring the `beforeCreate` hook is fired for each user.
-  2. Update all users to have the status `active` using `update`, ensuring the `beforeUpdate` hook is fired for each user.
-- The script must print `Transaction complete.` upon success.
-
-## Implementation Hints
-- Use `sequelize.transaction()` to manage the transaction.
-- Pass `{ individualHooks: true }` to `bulkCreate` and `update` to ensure the hooks are fired.
-- Make sure the transaction object is passed to all operations.
-- Use `sequelize.sync({ force: true })` before running the transaction to ensure the table exists and is clean.
-
-## Acceptance Criteria
-- Project path: /home/user/myproject
-- Command: `node process.js <users_json>`
-- The command input argument format: `<users_json>` is a JSON string containing an array of user objects, e.g., `[{"username": "alice", "password": "p1"}]`.
-- The expected command output format: The stdout should print: `Transaction complete.`
-- The script must create a SQLite database at `/home/user/myproject/database.sqlite`.
-- The final state in the database for the inserted users must reflect both hooks: passwords must end with `-hashed` and statuses must be `active-updated`.
-
-0:{"buildId":"IFkkdk2_asLV5MNgt4wQ-","rsc":["$","$1","c",{"children":[["$","div",null,{"className":"min-h-screen bg-background text-foreground font-sans selection:bg-primary/20","children":[["$","div",null,{"className":"fixed inset-0 -z-10 h-full w-full bg-background bg-[radial-gradient(#2a2a2a_1px,transparent_1px)] [background-size:16px_16px] [mask-image:radial-gradient(ellipse_50%_50%_at_50%_50%,#000_70%,transparent_100%)] opacity-20 dark:opacity-40"}],["$","$2",null,{"fallback":["$","div",null,{"className":"container mx-auto py-8 text-center","children":"Loading tasks..."}],"children":["$","$L3",null,{"tasksData":[{"taskName":"advanced_association_scopes_nested","instruction":"$4","trials":[{"job_name":"2026-05-29__09-18-17","trial_name":"advanced_association_scopes_nest__jmkn2dQ","model":"gpt-5.2-codex","rawModel":"openai/gpt-5.2-codex","agent":"Pochi","passed":true,"reward":1,"error":false,"latency_sec":1613.814,"latency_breakdown":{"env_setup":147.339,"agent_setup":21.621,"agent_exec":80.163,"verifier":35.421},"taskName":"advanced_association_scopes_nest","jobId":"jmkn2dQ","exec_duration":80.163},{"job_name":"2026-05-29__09-18-17","trial_name":"advanced_association_scopes_nest__uRwwQcz","model":"gemini-3.1-pro","rawModel":"google/gemini-3.1-pro","agent":"Pochi","passed":true,"reward":1,"error":false,"latency_sec":1553.12,"latency_breakdown":{"env_setup":99.101,"agent_setup":23.146,"agent_exec":76.086,"verifier":33.305},"taskName":"advanced_association_scopes_nest","jobId":"uRwwQcz","exec_duration":76.086},{"job_name":"2026-05-29__09-18-17","trial_name":"advanced_association_scopes_nest__8y93sKH","model":"glm-5.1","rawModel":"zai/glm-5.1","agent":"Pochi","passed":true,"reward":1,"error":false,"latency_sec":1676.541,"latency_breakdown":{"env_setup":177.768,"agent_setup":20.847,"agent_exec":90.161,"verifier":38.625},"taskName":"advanced_association_scopes_nest","jobId":"8y93sKH","exec_duration":90.161}]},{"taskName":"advanced_polymorphic_associations","instruction":"$5","trials":[{"job_name":"2026-05-29__05-13-14","trial_name":"advanced_polymorphic_association__YupGMKG","model":"glm-5.1","rawModel":"zai/glm-5.1","agent":"Pochi","passed":true,"reward":1,"error":false,"latency_sec":317.256,"latency_breakdown":{"env_setup":44.366,"agent_setup":21.326,"agent_exec":225.553,"verifier":6.52},"taskName":"advanced_polymorphic_association","jobId":"YupGMKG","exec_duration":225.553},{"job_name":"2026-05-29__05-13-14","trial_name":"advanced_polymorphic_association__fc2Lhmb","model":"gemini-3.1-pro","rawModel":"google/gemini-3.1-pro","agent":"Pochi","passed":true,"reward":1,"error":false,"latency_sec":207.214,"latency_breakdown":{"env_setup":62.925,"agent_setup":20.535,"agent_exec":96.636,"verifier":7.713},"taskName":"advanced_polymorphic_association","jobId":"fc2Lhmb","exec_duration":96.636},{"job_name":"2026-05-29__05-13-14","trial_name":"advanced_polymorphic_association__3TM5cD7","model":"gpt-5.2-codex","rawModel":"openai/gpt-5.2-codex","agent":"Pochi","passed":false,"reward":0,"error":false,"latency_sec":321.002,"latency_breakdown":{"env_setup":43.831,"agent_setup":20.066,"agent_exec":60.439,"verifier":181.041},"taskName":"advanced_polymorphic_association","jobId":"3TM5cD7","exec_duration":60.439}]},{"taskName":"aliased_association_include","instruction":"$6","trials":[{"job_name":"2026-05-29__02-45-40","trial_name":"aliased_association_include__CBBAcyR","model":"gemini-3.1-pro","rawModel":"google/gemini-3.1-pro","agent":"Pochi","passed":true,"reward":1,"error":false,"latency_sec":1329.889,"latency_breakdown":{"env_setup":38.227,"agent_setup":21.007,"agent_exec":57.464,"verifier":8.71},"taskName":"aliased_association_include","jobId":"CBBAcyR","exec_duration":57.464},{"job_name":"2026-05-29__02-45-40","trial_name":"aliased_association_include__VcoEEzP","model":"gpt-5.2-codex","rawModel":"openai/gpt-5.2-codex","agent":"Pochi","passed":true,"reward":1,"error":false,"latency_sec":1410.31,"latency_breakdown":{"env_setup":82.591,"agent_setup":22.065,"agent_exec":49.763,"verifier":9.63},"taskName":"aliased_association_include","jobId":"VcoEEzP","exec_duration":49.763},{"job_name":"2026-05-29__02-45-40","trial_name":"aliased_association_include__i2SGRAn","model":"glm-5.1","rawModel":"zai/glm-5.1","agent":"Pochi","passed":true,"reward":1,"error":false,"latency_sec":1440.956,"latency_breakdown":{"env_setup":113.047,"agent_setup":19.738,"agent_exec":131.676,"verifier":4.217},"taskName":"aliased_association_include","jobId":"i2SGRAn","exec_duration":131.676}]},{"taskName":"bulk_create_individual_hooks","instruction":"$7","trials":[{"job_name":"2026-05-29__03-15-48","trial_name":"bulk_create_individual_hooks__755LVuQ","model":"glm-5.1","rawModel":"zai/glm-5.1","agent":"Pochi","passed":false,"reward":0,"error":true,"latency_sec":283.629,"latency_breakdown":{"env_setup":36.888,"agent_setup":20.586,"agent_exec":204.7,"verifier":3.515},"taskName":"bulk_create_individual_hooks","jobId":"755LVuQ","exec_duration":204.7},{"job_name":"2026-05-29__03-15-48","trial_name":"bulk_create_individual_hooks__ZoQCKnN","model":"gemini-3.1-pro","rawModel":"google/gemini-3.1-pro","agent":"Pochi","passed":false,"reward":0,"error":false,"latency_sec":226.928,"latency_breakdown":{"env_setup":70.275,"agent_setup":23.853,"agent_exec":103.377,"verifier":4.904},"taskName":"bulk_create_individual_hooks","jobId":"ZoQCKnN","exec_duration":103.377},{"job_name":"2026-05-29__03-15-48","trial_name":"bulk_create_individual_hooks__Dnfb7od","model":"gpt-5.2-codex","rawModel":"openai/gpt-5.2-codex","agent":"Pochi","passed":false,"reward":0,"error":false,"latency_sec":156.138,"latency_breakdown":{"env_setup":51.551,"agent_setup":21.954,"agent_exec":52.838,"verifier":14.949},"taskName":"bulk_create_individual_hooks","jobId":"Dnfb7od","exec_duration":52.838}]},{"taskName":"bulk_update_individual_hooks","instruction":"$8","trials":[{"job_name":"2026-05-29__05-42-30","trial_name":"bulk_update_individual_hooks__Ax8NShK","model":"glm-5.1","rawModel":"zai/glm-5.1","agent":"Pochi","passed":false,"reward":0,"error":false,"latency_sec":1500.808,"latency_breakdown":{"env_setup":55.04,"agent_setup":20.817,"agent_exec":78.873,"verifier":15.237},"taskName":"bulk_update_individual_hooks","jobId":"Ax8NShK","exec_duration":78.873},{"job_name":"2026-05-29__05-42-30","trial_name":"bulk_update_individual_hooks__aMpC6QQ","model":"gpt-5.2-codex","rawModel":"openai/gpt-5.2-codex","agent":"Pochi","passed":false,"reward":0,"error":false,"latency_sec":1424.456,"latency_breakdown":{"env_setup":47.89,"agent_setup":22.164,"agent_exec":55.031,"verifier":2.027},"taskName":"bulk_update_individual_hooks","jobId":"aMpC6QQ","exec_duration":55.031},{"job_name":"2026-05-29__05-42-30","trial_name":"bulk_update_individual_hooks__cL7GpGY","model":"gemini-3.1-pro","rawModel":"google/gemini-3.1-pro","agent":"Pochi","passed":false,"reward":0,"error":false,"latency_sec":1404.196,"latency_breakdown":{"env_setup":75.192,"agent_setup":21.017,"agent_exec":51.642,"verifier":4.311},"taskName":"bulk_update_individual_hooks","jobId":"cL7GpGY","exec_duration":51.642}]},{"taskName":"cascading_soft_deletes","instruction":"$9","trials":[{"job_name":"2026-05-29__05-42-30","trial_name":"cascading_soft_deletes__CmHczSv","model":"gpt-5.2-codex","rawModel":"openai/gpt-5.2-codex","agent":"Pochi","passed":true,"reward":1,"error":false,"latency_sec":188.758,"latency_breakdown":{"env_setup":58.64,"agent_setup":19.189,"agent_exec":74.079,"verifier":19.122},"taskName":"cascading_soft_deletes","jobId":"CmHczSv","exec_duration":74.079},{"job_name":"2026-05-29__05-42-30","trial_name":"cascading_soft_deletes__kqG4NDk","model":"gemini-3.1-pro","rawModel":"google/gemini-3.1-pro","agent":"Pochi","passed":true,"reward":1,"error":false,"latency_sec":253.538,"latency_breakdown":{"env_setup":71.873,"agent_setup":20.372,"agent_exec":121.843,"verifier":16.692},"taskName":"cascading_soft_deletes","jobId":"kqG4NDk","exec_duration":121.843},{"job_name":"2026-05-29__05-42-30","trial_name":"cascading_soft_deletes__Eo8n5ma","model":"glm-5.1","rawModel":"zai/glm-5.1","agent":"Pochi","passed":true,"reward":1,"error":false,"latency_sec":212.413,"latency_breakdown":{"env_setup":54.77,"agent_setup":20.188,"agent_exec":118.102,"verifier":2.077},"taskName":"cascading_soft_deletes","jobId":"Eo8n5ma","exec_duration":118.102}]},{"taskName":"complex_m2m_custom_junction","instruction":"$a","trials":[{"job_name":"2026-05-29__05-13-14","trial_name":"complex_m2m_custom_junction__PCCgbtC","model":"gemini-3.1-pro","rawModel":"google/gemini-3.1-pro","agent":"Pochi","passed":true,"reward":1,"error":false,"latency_sec":168.651,"latency_breakdown":{"env_setup":63.653,"agent_setup":20.605,"agent_exec":59.986,"verifier":5.542},"taskName":"complex_m2m_custom_junction","jobId":"PCCgbtC","exec_duration":59.986},{"job_name":"2026-05-29__05-13-14","trial_name":"complex_m2m_custom_junction__khRXqVi","model":"gpt-5.2-codex","rawModel":"openai/gpt-5.2-codex","agent":"Pochi","passed":false,"reward":0,"error":false,"latency_sec":181.677,"latency_breakdown":{"env_setup":84.39,"agent_setup":19.966,"agent_exec":54.583,"verifier":0.887},"taskName":"complex_m2m_custom_junction","jobId":"khRXqVi","exec_duration":54.583},{"job_name":"2026-05-29__05-13-14","trial_name":"complex_m2m_custom_junction__XTUHJ4D","model":"glm-5.1","rawModel":"zai/glm-5.1","agent":"Pochi","passed":true,"reward":1,"error":false,"latency_sec":304.991,"latency_breakdown":{"env_setup":99.463,"agent_setup":18.921,"agent_exec":161.293,"verifier":7.191},"taskName":"complex_m2m_custom_junction","jobId":"XTUHJ4D","exec_duration":161.293}]},{"taskName":"composite_pk_upsert","instruction":"$b","trials":[{"job_name":"2026-05-29__05-42-30","trial_name":"composite_pk_upsert__v63aoAU","model":"gemini-3.1-pro","rawModel":"google/gemini-3.1-pro","agent":"Pochi","passed":true,"reward":1,"error":false,"latency_sec":261.676,"latency_breakdown":{"env_setup":97.075,"agent_setup":19.867,"agent_exec":121.07,"verifier":3.38},"taskName":"composite_pk_upsert","jobId":"v63aoAU","exec_duration":121.07},{"job_name":"2026-05-29__05-42-30","trial_name":"composite_pk_upsert__MEHwp85","model":"gpt-5.2-codex","rawModel":"openai/gpt-5.2-codex","agent":"Pochi","passed":false,"reward":0,"error":false,"latency_sec":204.63,"latency_breakdown":{"env_setup":61.199,"agent_setup":19.986,"agent_exec":42.129,"verifier":61.014},"taskName":"composite_pk_upsert","jobId":"MEHwp85","exec_duration":42.129},{"job_name":"2026-05-29__05-42-30","trial_name":"composite_pk_upsert__aHaaHnh","model":"glm-5.1","rawModel":"zai/glm-5.1","agent":"Pochi","passed":true,"reward":1,"error":false,"latency_sec":208.229,"latency_breakdown":{"env_setup":68.659,"agent_setup":20.945,"agent_exec":99.052,"verifier":1.431},"taskName":"composite_pk_upsert","jobId":"aHaaHnh","exec_duration":99.052}]},{"taskName":"custom_validation_overlapping_dates","instruction":"$c","trials":[{"job_name":"2026-05-29__05-13-14","trial_name":"custom_validation_overlapping_da__LcJChdz","model":"glm-5.1","rawModel":"zai/glm-5.1","agent":"Pochi","passed":true,"reward":1,"error":false,"latency_sec":244.173,"latency_breakdown":{"env_setup":12.33,"agent_setup":20.031,"agent_exec":192.141,"verifier":1.133},"taskName":"custom_validation_overlapping_da","jobId":"LcJChdz","exec_duration":192.141},{"job_name":"2026-05-29__05-13-14","trial_name":"custom_validation_overlapping_da__g8YdKCQ","model":"gemini-3.1-pro","rawModel":"google/gemini-3.1-pro","agent":"Pochi","passed":false,"reward":0,"error":false,"latency_sec":201.138,"latency_breakdown":{"env_setup":54.499,"agent_setup":21.502,"agent_exec":107.835,"verifier":1.19},"taskName":"custom_validation_overlapping_da","jobId":"g8YdKCQ","exec_duration":107.835},{"job_name":"2026-05-29__05-13-14","trial_name":"custom_validation_overlapping_da__8qtSyMV","model":"gpt-5.2-codex","rawModel":"openai/gpt-5.2-codex","agent":"Pochi","passed":false,"reward":0,"error":false,"latency_sec":349.199,"latency_breakdown":{"env_setup":68.723,"agent_setup":19.455,"agent_exec":54.933,"verifier":180.854},"taskName":"custom_validation_overlapping_da","jobId":"8qtSyMV","exec_duration":54.933}]},{"taskName":"dynamic_connection_hooks","instruction":"$d","trials":[{"job_name":"2026-05-29__05-42-30","trial_name":"dynamic_connection_hooks__HZRmgfD","model":"glm-5.1","rawModel":"zai/glm-5.1","agent":"Pochi","passed":false,"reward":0,"error":false,"latency_sec":1561.733,"latency_breakdown":{"env_setup":52.129,"agent_setup":21.886,"agent_exec":226.529,"verifier":5.353},"taskName":"dynamic_connection_hooks","jobId":"HZRmgfD","exec_duration":226.529},{"job_name":"2026-05-29__05-42-30","trial_name":"dynamic_connection_hooks__2hW5gD6","model":"gpt-5.2-codex","rawModel":"openai/gpt-5.2-codex","agent":"Pochi","passed":false,"reward":0,"error":false,"latency_sec":1385.41,"latency_breakdown":{"env_setup":52.081,"agent_setup":19.511,"agent_exec":56.277,"verifier":3.322},"taskName":"dynamic_connection_hooks","jobId":"2hW5gD6","exec_duration":56.277},{"job_name":"2026-05-29__05-42-30","trial_name":"dynamic_connection_hooks__wNAPa59","model":"gemini-3.1-pro","rawModel":"google/gemini-3.1-pro","agent":"Pochi","passed":false,"reward":0,"error":false,"latency_sec":1537.755,"latency_breakdown":{"env_setup":26.274,"agent_setup":20.945,"agent_exec":242.632,"verifier":3.762},"taskName":"dynamic_connection_hooks","jobId":"wNAPa59","exec_duration":242.632}]},{"taskName":"eager_loading_super_many_to_many","instruction":"$e","trials":[{"job_name":"2026-05-29__05-42-30","trial_name":"eager_loading_super_many_to_many__NA3nQBw","model":"gemini-3.1-pro","rawModel":"google/gemini-3.1-pro","agent":"Pochi","passed":true,"reward":1,"error":false,"latency_sec":367.886,"latency_breakdown":{"env_setup":49.618,"agent_setup":20.153,"agent_exec":276.29,"verifier":1.826},"taskName":"eager_loading_super_many_to_many","jobId":"NA3nQBw","exec_duration":276.29},{"job_name":"2026-05-29__05-42-30","trial_name":"eager_loading_super_many_to_many__wLxkGU8","model":"glm-5.1","rawModel":"zai/glm-5.1","agent":"Pochi","passed":false,"reward":0,"error":true,"latency_sec":79.173,"latency_breakdown":{"env_setup":26.191,"agent_setup":19.783,"agent_exec":6.056,"verifier":1.202},"taskName":"eager_loading_super_many_to_many","jobId":"wLxkGU8","exec_duration":6.056},{"job_name":"2026-05-29__05-42-30","trial_name":"eager_loading_super_many_to_many__GKAWFda","model":"gpt-5.2-codex","rawModel":"openai/gpt-5.2-codex","agent":"Pochi","passed":false,"reward":0,"error":false,"latency_sec":171.422,"latency_breakdown":{"env_setup":63.215,"agent_setup":20.289,"agent_exec":64.108,"verifier":1.112},"taskName":"eager_loading_super_many_to_many","jobId":"GKAWFda","exec_duration":64.108}]},{"taskName":"find_or_create_transaction_hook","instruction":"$f","trials":[{"job_name":"2026-05-29__05-42-30","trial_name":"find_or_create_transaction_hook__fm7xDGV","model":"gemini-3.1-pro","rawModel":"google/gemini-3.1-pro","agent":"Pochi","passed":true,"reward":1,"error":false,"latency_sec":508.18,"latency_breakdown":{"env_setup":40.549,"agent_setup":21.264,"agent_exec":424.887,"verifier":0.869},"taskName":"find_or_create_transaction_hook","jobId":"fm7xDGV","exec_duration":424.887},{"job_name":"2026-05-29__05-42-30","trial_name":"find_or_create_transaction_hook__K3dvVQF","model":"glm-5.1","rawModel":"zai/glm-5.1","agent":"Pochi","passed":true,"reward":1,"error":false,"latency_sec":1764.888,"latency_breakdown":{"env_setup":90.05,"agent_setup":20.477,"agent_exec":376.925,"verifier":0.885},"taskName":"find_or_create_transaction_hook","jobId":"K3dvVQF","exec_duration":376.925},{"job_name":"2026-05-29__05-42-30","trial_name":"find_or_create_transaction_hook__w6a4M3E","model":"gpt-5.2-codex","rawModel":"openai/gpt-5.2-codex","agent":"Pochi","passed":false,"reward":0,"error":false,"latency_sec":1293.754,"latency_breakdown":{"env_setup":15.77,"agent_setup":21.95,"agent_exec":48.583,"verifier":0.814},"taskName":"find_or_create_transaction_hook","jobId":"w6a4M3E","exec_duration":48.583}]},{"taskName":"global_default_hooks","instruction":"$10","trials":[{"job_name":"2026-05-29__05-42-30","trial_name":"global_default_hooks__jhjwy2H","model":"gpt-5.2-codex","rawModel":"openai/gpt-5.2-codex","agent":"Pochi","passed":true,"reward":1,"error":false,"latency_sec":1418.141,"latency_breakdown":{"env_setup":63.712,"agent_setup":20.658,"agent_exec":73.504,"verifier":9.39},"taskName":"global_default_hooks","jobId":"jhjwy2H","exec_duration":73.504},{"job_name":"2026-05-29__05-42-30","trial_name":"global_default_hooks__eEBHeYj","model":"gemini-3.1-pro","rawModel":"google/gemini-3.1-pro","agent":"Pochi","passed":true,"reward":1,"error":false,"latency_sec":1446.745,"latency_breakdown":{"env_setup":79.51,"agent_setup":20.045,"agent_exec":63.408,"verifier":14.068},"taskName":"global_default_hooks","jobId":"eEBHeYj","exec_duration":63.408},{"job_name":"2026-05-29__05-42-30","trial_name":"global_default_hooks__5qrfmgP","model":"glm-5.1","rawModel":"zai/glm-5.1","agent":"Pochi","passed":true,"reward":1,"error":false,"latency_sec":1405.971,"latency_breakdown":{"env_setup":31.959,"agent_setup":22.137,"agent_exec":97.1,"verifier":1.205},"taskName":"global_default_hooks","jobId":"5qrfmgP","exec_duration":97.1}]},{"taskName":"m2m_junction_bulk_hooks","instruction":"$11","trials":[{"job_name":"2026-05-29__05-42-30","trial_name":"m2m_junction_bulk_hooks__jj49r6T","model":"glm-5.1","rawModel":"zai/glm-5.1","agent":"Pochi","passed":true,"reward":1,"error":false,"latency_sec":312.872,"latency_breakdown":{"env_setup":142.874,"agent_setup":20.513,"agent_exec":119.308,"verifier":9.808},"taskName":"m2m_junction_bulk_hooks","jobId":"jj49r6T","exec_duration":119.308},{"job_name":"2026-05-29__05-42-30","trial_name":"m2m_junction_bulk_hooks__qBxhSWP","model":"gemini-3.1-pro","rawModel":"google/gemini-3.1-pro","agent":"Pochi","passed":true,"reward":1,"error":false,"latency_sec":204.707,"latency_breakdown":{"env_setup":86.319,"agent_setup":20.014,"agent_exec":68.744,"verifier":10.008},"taskName":"m2m_junction_bulk_hooks","jobId":"qBxhSWP","exec_duration":68.744},{"job_name":"2026-05-29__05-42-30","trial_name":"m2m_junction_bulk_hooks__zs8H8q7","model":"gpt-5.2-codex","rawModel":"openai/gpt-5.2-codex","agent":"Pochi","passed":true,"reward":1,"error":false,"latency_sec":243.1,"latency_breakdown":{"env_setup":115.942,"agent_setup":20.913,"agent_exec":58.064,"verifier":24.346},"taskName":"m2m_junction_bulk_hooks","jobId":"zs8H8q7","exec_duration":58.064}]},{"taskName":"migration_add_column_backfill_fk","instruction":"$12","trials":[{"job_name":"2026-05-29__09-18-17","trial_name":"migration_add_column_backfill_fk__En2RTN5","model":"glm-5.1","rawModel":"zai/glm-5.1","agent":"Pochi","passed":true,"reward":1,"error":false,"latency_sec":2058.066,"latency_breakdown":{"env_setup":178.694,"agent_setup":21.57,"agent_exec":157.504,"verifier":10.958},"taskName":"migration_add_column_backfill_fk","jobId":"En2RTN5","exec_duration":157.504},{"job_name":"2026-05-29__09-18-17","trial_name":"migration_add_column_backfill_fk__9giLTsM","model":"gpt-5.2-codex","rawModel":"openai/gpt-5.2-codex","agent":"Pochi","passed":true,"reward":1,"error":false,"latency_sec":1970.287,"latency_breakdown":{"env_setup":147.725,"agent_setup":21.541,"agent_exec":86.128,"verifier":28.012},"taskName":"migration_add_column_backfill_fk","jobId":"9giLTsM","exec_duration":86.128},{"job_name":"2026-05-29__09-18-17","trial_name":"migration_add_column_backfill_fk__yKroaA9","model":"gemini-3.1-pro","rawModel":"google/gemini-3.1-pro","agent":"Pochi","passed":true,"reward":1,"error":false,"latency_sec":1948.066,"latency_breakdown":{"env_setup":106.872,"agent_setup":20.691,"agent_exec":123.111,"verifier":14.707},"taskName":"migration_add_column_backfill_fk","jobId":"yKroaA9","exec_duration":123.111}]},{"taskName":"nested_includes_filtered","instruction":"$13","trials":[{"job_name":"2026-05-29__03-15-48","trial_name":"nested_includes_filtered__nhg88QD","model":"gemini-3.1-pro","rawModel":"google/gemini-3.1-pro","agent":"Pochi","passed":true,"reward":1,"error":false,"latency_sec":274.364,"latency_breakdown":{"env_setup":74.692,"agent_setup":21.857,"agent_exec":158.476,"verifier":3.892},"taskName":"nested_includes_filtered","jobId":"nhg88QD","exec_duration":158.476},{"job_name":"2026-05-29__03-15-48","trial_name":"nested_includes_filtered__CCTAk8M","model":"gpt-5.2-codex","rawModel":"openai/gpt-5.2-codex","agent":"Pochi","passed":true,"reward":1,"error":false,"latency_sec":192.057,"latency_breakdown":{"env_setup":85.967,"agent_setup":20.455,"agent_exec":43.353,"verifier":24.928},"taskName":"nested_includes_filtered","jobId":"CCTAk8M","exec_duration":43.353},{"job_name":"2026-05-29__03-15-48","trial_name":"nested_includes_filtered__fwiptiS","model":"glm-5.1","rawModel":"zai/glm-5.1","agent":"Pochi","passed":true,"reward":1,"error":false,"latency_sec":457.928,"latency_breakdown":{"env_setup":95.971,"agent_setup":21.101,"agent_exec":314.274,"verifier":9.164},"taskName":"nested_includes_filtered","jobId":"fwiptiS","exec_duration":314.274}]},{"taskName":"optimistic_locking_stale_data","instruction":"$14","trials":[{"job_name":"2026-05-29__05-42-30","trial_name":"optimistic_locking_stale_data__KRmw7rH","model":"gemini-3.1-pro","rawModel":"google/gemini-3.1-pro","agent":"Pochi","passed":true,"reward":1,"error":false,"latency_sec":1404.496,"latency_breakdown":{"env_setup":88.542,"agent_setup":20.343,"agent_exec":48.876,"verifier":1.375},"taskName":"optimistic_locking_stale_data","jobId":"KRmw7rH","exec_duration":48.876},{"job_name":"2026-05-29__05-42-30","trial_name":"optimistic_locking_stale_data__z5HkXL5","model":"gpt-5.2-codex","rawModel":"openai/gpt-5.2-codex","agent":"Pochi","passed":true,"reward":1,"error":false,"latency_sec":1385.932,"latency_breakdown":{"env_setup":83.362,"agent_setup":20.828,"agent_exec":41.241,"verifier":1.355},"taskName":"optimistic_locking_stale_data","jobId":"z5HkXL5","exec_duration":41.241},{"job_name":"2026-05-29__05-42-30","trial_name":"optimistic_locking_stale_data__yE48f9F","model":"glm-5.1","rawModel":"zai/glm-5.1","agent":"Pochi","passed":true,"reward":1,"error":false,"latency_sec":1381.188,"latency_breakdown":{"env_setup":32.553,"agent_setup":20.354,"agent_exec":70.519,"verifier":1.477},"taskName":"optimistic_locking_stale_data","jobId":"yE48f9F","exec_duration":70.519}]},{"taskName":"paranoid_soft_delete_restore","instruction":"$15","trials":[{"job_name":"2026-05-29__05-42-30","trial_name":"paranoid_soft_delete_restore__R2Vdw9t","model":"glm-5.1","rawModel":"zai/glm-5.1","agent":"Pochi","passed":true,"reward":1,"error":false,"latency_sec":1513.901,"latency_breakdown":{"env_setup":91.064,"agent_setup":20.883,"agent_exec":110.562,"verifier":5.75},"taskName":"paranoid_soft_delete_restore","jobId":"R2Vdw9t","exec_duration":110.562},{"job_name":"2026-05-29__05-42-30","trial_name":"paranoid_soft_delete_restore__KvfQugU","model":"gemini-3.1-pro","rawModel":"google/gemini-3.1-pro","agent":"Pochi","passed":true,"reward":1,"error":false,"latency_sec":1447.848,"latency_breakdown":{"env_setup":61.888,"agent_setup":20.568,"agent_exec":74.758,"verifier":13.173},"taskName":"paranoid_soft_delete_restore","jobId":"KvfQugU","exec_duration":74.758},{"job_name":"2026-05-29__05-42-30","trial_name":"paranoid_soft_delete_restore__UR4D6MS","model":"gpt-5.2-codex","rawModel":"openai/gpt-5.2-codex","agent":"Pochi","passed":true,"reward":1,"error":false,"latency_sec":1422.382,"latency_breakdown":{"env_setup":30.435,"agent_setup":19.982,"agent_exec":56.595,"verifier":4.261},"taskName":"paranoid_soft_delete_restore","jobId":"UR4D6MS","exec_duration":56.595}]},{"taskName":"refactor_sync_to_migrations","instruction":"$16","trials":[{"job_name":"2026-05-29__05-42-30","trial_name":"refactor_sync_to_migrations__eqRmfZc","model":"gemini-3.1-pro","rawModel":"google/gemini-3.1-pro","agent":"Pochi","passed":true,"reward":1,"error":false,"latency_sec":291.838,"latency_breakdown":{"env_setup":86.166,"agent_setup":19.856,"agent_exec":164.103,"verifier":1.996},"taskName":"refactor_sync_to_migrations","jobId":"eqRmfZc","exec_duration":164.103},{"job_name":"2026-05-29__05-42-30","trial_name":"refactor_sync_to_migrations__5Vrabau","model":"glm-5.1","rawModel":"zai/glm-5.1","agent":"Pochi","passed":true,"reward":1,"error":false,"latency_sec":451.31,"latency_breakdown":{"env_setup":143.225,"agent_setup":20.235,"agent_exec":260.798,"verifier":2.736},"taskName":"refactor_sync_to_migrations","jobId":"5Vrabau","exec_duration":260.798},{"job_name":"2026-05-29__05-42-30","trial_name":"refactor_sync_to_migrations__ELM3emf","model":"gpt-5.2-codex","rawModel":"openai/gpt-5.2-codex","agent":"Pochi","passed":true,"reward":1,"error":false,"latency_sec":292.863,"latency_breakdown":{"env_setup":119.784,"agent_setup":21.444,"agent_exec":130.193,"verifier":1.958},"taskName":"refactor_sync_to_migrations","jobId":"ELM3emf","exec_duration":130.193}]},{"taskName":"slug_generation_hook","instruction":"$17","trials":[{"job_name":"2026-05-29__05-13-14","trial_name":"slug_generation_hook__jn9GgbY","model":"gemini-3.1-pro","rawModel":"google/gemini-3.1-pro","agent":"Pochi","passed":true,"reward":1,"error":false,"latency_sec":223.442,"latency_breakdown":{"env_setup":30.875,"agent_setup":19.434,"agent_exec":157.789,"verifier":1.032},"taskName":"slug_generation_hook","jobId":"jn9GgbY","exec_duration":157.789},{"job_name":"2026-05-29__05-13-14","trial_name":"slug_generation_hook__8x2uK6r","model":"gpt-5.2-codex","rawModel":"openai/gpt-5.2-codex","agent":"Pochi","passed":false,"reward":0,"error":false,"latency_sec":315.964,"latency_breakdown":{"env_setup":49.993,"agent_setup":21.217,"agent_exec":50.271,"verifier":180.904},"taskName":"slug_generation_hook","jobId":"8x2uK6r","exec_duration":50.271},{"job_name":"2026-05-29__05-13-14","trial_name":"slug_generation_hook__sgkQvPC","model":"glm-5.1","rawModel":"zai/glm-5.1","agent":"Pochi","passed":true,"reward":1,"error":false,"latency_sec":395.429,"latency_breakdown":{"env_setup":14.265,"agent_setup":20.488,"agent_exec":334.475,"verifier":4.58},"taskName":"slug_generation_hook","jobId":"sgkQvPC","exec_duration":334.475}]},{"taskName":"transaction_rollback_hook_failure","instruction":"$18","trials":[{"job_name":"2026-05-29__05-42-30","trial_name":"transaction_rollback_hook_failur__QnXxxsb","model":"glm-5.1","rawModel":"zai/glm-5.1","agent":"Pochi","passed":true,"reward":1,"error":false,"latency_sec":223.938,"latency_breakdown":{"env_setup":107.021,"agent_setup":20.457,"agent_exec":71.195,"verifier":5.979},"taskName":"transaction_rollback_hook_failur","jobId":"QnXxxsb","exec_duration":71.195},{"job_name":"2026-05-29__05-42-30","trial_name":"transaction_rollback_hook_failur__AJfvNYj","model":"gemini-3.1-pro","rawModel":"google/gemini-3.1-pro","agent":"Pochi","passed":true,"reward":1,"error":false,"latency_sec":159.732,"latency_breakdown":{"env_setup":54.614,"agent_setup":20.182,"agent_exec":56.379,"verifier":3.936},"taskName":"transaction_rollback_hook_failur","jobId":"AJfvNYj","exec_duration":56.379},{"job_name":"2026-05-29__05-42-30","trial_name":"transaction_rollback_hook_failur__T5duLSY","model":"gpt-5.2-codex","rawModel":"openai/gpt-5.2-codex","agent":"Pochi","passed":true,"reward":1,"error":false,"latency_sec":201.167,"latency_breakdown":{"env_setup":89.776,"agent_setup":20.792,"agent_exec":49.886,"verifier":14.145},"taskName":"transaction_rollback_hook_failur","jobId":"T5duLSY","exec_duration":49.886}]},{"taskName":"transactional_bulk_hooks","instruction":"$19","trials":[{"job_name":"2026-05-29__09-18-17","trial_name":"transactional_bulk_hooks__DtHW9oq","model":"gemini-3.1-pro","rawModel":"google/gemini-3.1-pro","agent":"Pochi","passed":true,"reward":1,"error":false,"latency_sec":1380.284,"latency_breakdown":{"env_setup":48.43,"agent_setup":21.936,"agent_exec":63.502,"verifier":6.44},"taskName":"transactional_bulk_hooks","jobId":"DtHW9oq","exec_duration":63.502},{"job_name":"2026-05-29__09-18-17","trial_name":"transactional_bulk_hooks__hu8T3qn","model":"gpt-5.2-codex","rawModel":"openai/gpt-5.2-codex","agent":"Pochi","passed":true,"reward":1,"error":false,"latency_sec":1376.227,"latency_breakdown":{"env_setup":47.449,"agent_setup":45.625,"agent_exec":43.623,"verifier":1.535},"taskName":"transactional_bulk_hooks","jobId":"hu8T3qn","exec_duration":43.623},{"job_name":"2026-05-29__09-18-17","trial_name":"transactional_bulk_hooks__MKQy5wz","model":"glm-5.1","rawModel":"zai/glm-5.1","agent":"Pochi","passed":true,"reward":1,"error":false,"latency_sec":1413.954,"latency_breakdown":{"env_setup":49.76,"agent_setup":19.753,"agent_exec":99.397,"verifier":5.917},"taskName":"transactional_bulk_hooks","jobId":"MKQy5wz","exec_duration":99.397}]}]}]}]]}],["$L1a","$L1b"],"$L1c"]}],"loading":null,"isPartial":false}
-1a:["$","script","script-0",{"src":"/sequelize-benchmark/pr-preview/pr-3/_next/static/chunks/67d4b3c35eb682b4.js","async":true}]
-1b:["$","script","script-1",{"src":"/sequelize-benchmark/pr-preview/pr-3/_next/static/chunks/f9f579c42c486944.js","async":true}]
-1c:["$","$L1d",null,{"children":["$","$2",null,{"name":"Next.MetadataOutlet","children":"$@1e"}]}]
-1e:null
+0:{"buildId":"SHLMxWVAUc8_V4tQM6foz","rsc":["$","$1","c",{"children":[["$","div",null,{"className":"min-h-screen bg-background text-foreground font-sans selection:bg-primary/20","children":[["$","div",null,{"className":"fixed inset-0 -z-10 h-full w-full bg-background bg-[radial-gradient(#2a2a2a_1px,transparent_1px)] [background-size:16px_16px] [mask-image:radial-gradient(ellipse_50%_50%_at_50%_50%,#000_70%,transparent_100%)] opacity-20 dark:opacity-40"}],["$","$2",null,{"fallback":["$","div",null,{"className":"container mx-auto py-8 text-center","children":"Loading tasks..."}],"children":["$","$L3",null,{"tasksData":[{"taskName":"advanced_association_scopes_nested","instruction":"$4","trials":[{"job_name":"2026-05-29__09-18-17","trial_name":"advanced_association_scopes_nest__jmkn2dQ","model":"gpt-5.2-codex","rawModel":"openai/gpt-5.2-codex","agent":"Pochi","passed":true,"reward":1,"error":false,"latency_sec":1613.814,"latency_breakdown":{"env_setup":147.339,"agent_setup":21.621,"agent_exec":80.163,"verifier":35.421},"taskName":"advanced_association_scopes_nest","jobId":"jmkn2dQ","exec_duration":80.163},{"job_name":"2026-05-29__09-18-17","trial_name":"advanced_association_scopes_nest__uRwwQcz","model":"gemini-3.1-pro","rawModel":"google/gemini-3.1-pro","agent":"Pochi","passed":true,"reward":1,"error":false,"latency_sec":1553.12,"latency_breakdown":{"env_setup":99.101,"agent_setup":23.146,"agent_exec":76.086,"verifier":33.305},"taskName":"advanced_association_scopes_nest","jobId":"uRwwQcz","exec_duration":76.086},{"job_name":"2026-05-29__09-18-17","trial_name":"advanced_association_scopes_nest__8y93sKH","model":"glm-5.1","rawModel":"zai/glm-5.1","agent":"Pochi","passed":true,"reward":1,"error":false,"latency_sec":1676.541,"latency_breakdown":{"env_setup":177.768,"agent_setup":20.847,"agent_exec":90.161,"verifier":38.625},"taskName":"advanced_association_scopes_nest","jobId":"8y93sKH","exec_duration":90.161}]},{"taskName":"advanced_polymorphic_associations","instruction":"$5","trials":[{"job_name":"2026-05-29__05-13-14","trial_name":"advanced_polymorphic_association__YupGMKG","model":"glm-5.1","rawModel":"zai/glm-5.1","agent":"Pochi","passed":true,"reward":1,"error":false,"latency_sec":317.256,"latency_breakdown":{"env_setup":44.366,"agent_setup":21.326,"agent_exec":225.553,"verifier":6.52},"taskName":"advanced_polymorphic_association","jobId":"YupGMKG","exec_duration":225.553},{"job_name":"2026-05-29__05-13-14","trial_name":"advanced_polymorphic_association__fc2Lhmb","model":"gemini-3.1-pro","rawModel":"google/gemini-3.1-pro","agent":"Pochi","passed":true,"reward":1,"error":false,"latency_sec":207.214,"latency_breakdown":{"env_setup":62.925,"agent_setup":20.535,"agent_exec":96.636,"verifier":7.713},"taskName":"advanced_polymorphic_association","jobId":"fc2Lhmb","exec_duration":96.636},{"job_name":"2026-05-29__05-13-14","trial_name":"advanced_polymorphic_association__3TM5cD7","model":"gpt-5.2-codex","rawModel":"openai/gpt-5.2-codex","agent":"Pochi","passed":false,"reward":0,"error":false,"latency_sec":321.002,"latency_breakdown":{"env_setup":43.831,"agent_setup":20.066,"agent_exec":60.439,"verifier":181.041},"taskName":"advanced_polymorphic_association","jobId":"3TM5cD7","exec_duration":60.439}]},{"taskName":"aliased_association_include","instruction":"$6","trials":[{"job_name":"2026-05-29__02-45-40","trial_name":"aliased_association_include__CBBAcyR","model":"gemini-3.1-pro","rawModel":"google/gemini-3.1-pro","agent":"Pochi","passed":true,"reward":1,"error":false,"latency_sec":1329.889,"latency_breakdown":{"env_setup":38.227,"agent_setup":21.007,"agent_exec":57.464,"verifier":8.71},"taskName":"aliased_association_include","jobId":"CBBAcyR","exec_duration":57.464},{"job_name":"2026-05-29__02-45-40","trial_name":"aliased_association_include__VcoEEzP","model":"gpt-5.2-codex","rawModel":"openai/gpt-5.2-codex","agent":"Pochi","passed":true,"reward":1,"error":false,"latency_sec":1410.31,"latency_breakdown":{"env_setup":82.591,"agent_setup":22.065,"agent_exec":49.763,"verifier":9.63},"taskName":"aliased_association_include","jobId":"VcoEEzP","exec_duration":49.763},{"job_name":"2026-05-29__02-45-40","trial_name":"aliased_association_include__i2SGRAn","model":"glm-5.1","rawModel":"zai/glm-5.1","agent":"Pochi","passed":true,"reward":1,"error":false,"latency_sec":1440.956,"latency_breakdown":{"env_setup":113.047,"agent_setup":19.738,"agent_exec":131.676,"verifier":4.217},"taskName":"aliased_association_include","jobId":"i2SGRAn","exec_duration":131.676}]},{"taskName":"cascading_soft_deletes","instruction":"$7","trials":[{"job_name":"2026-05-29__05-42-30","trial_name":"cascading_soft_deletes__CmHczSv","model":"gpt-5.2-codex","rawModel":"openai/gpt-5.2-codex","agent":"Pochi","passed":true,"reward":1,"error":false,"latency_sec":188.758,"latency_breakdown":{"env_setup":58.64,"agent_setup":19.189,"agent_exec":74.079,"verifier":19.122},"taskName":"cascading_soft_deletes","jobId":"CmHczSv","exec_duration":74.079},{"job_name":"2026-05-29__05-42-30","trial_name":"cascading_soft_deletes__kqG4NDk","model":"gemini-3.1-pro","rawModel":"google/gemini-3.1-pro","agent":"Pochi","passed":true,"reward":1,"error":false,"latency_sec":253.538,"latency_breakdown":{"env_setup":71.873,"agent_setup":20.372,"agent_exec":121.843,"verifier":16.692},"taskName":"cascading_soft_deletes","jobId":"kqG4NDk","exec_duration":121.843},{"job_name":"2026-05-29__05-42-30","trial_name":"cascading_soft_deletes__Eo8n5ma","model":"glm-5.1","rawModel":"zai/glm-5.1","agent":"Pochi","passed":true,"reward":1,"error":false,"latency_sec":212.413,"latency_breakdown":{"env_setup":54.77,"agent_setup":20.188,"agent_exec":118.102,"verifier":2.077},"taskName":"cascading_soft_deletes","jobId":"Eo8n5ma","exec_duration":118.102}]},{"taskName":"complex_m2m_custom_junction","instruction":"$8","trials":[{"job_name":"2026-05-29__05-13-14","trial_name":"complex_m2m_custom_junction__PCCgbtC","model":"gemini-3.1-pro","rawModel":"google/gemini-3.1-pro","agent":"Pochi","passed":true,"reward":1,"error":false,"latency_sec":168.651,"latency_breakdown":{"env_setup":63.653,"agent_setup":20.605,"agent_exec":59.986,"verifier":5.542},"taskName":"complex_m2m_custom_junction","jobId":"PCCgbtC","exec_duration":59.986},{"job_name":"2026-05-29__05-13-14","trial_name":"complex_m2m_custom_junction__khRXqVi","model":"gpt-5.2-codex","rawModel":"openai/gpt-5.2-codex","agent":"Pochi","passed":false,"reward":0,"error":false,"latency_sec":181.677,"latency_breakdown":{"env_setup":84.39,"agent_setup":19.966,"agent_exec":54.583,"verifier":0.887},"taskName":"complex_m2m_custom_junction","jobId":"khRXqVi","exec_duration":54.583},{"job_name":"2026-05-29__05-13-14","trial_name":"complex_m2m_custom_junction__XTUHJ4D","model":"glm-5.1","rawModel":"zai/glm-5.1","agent":"Pochi","passed":true,"reward":1,"error":false,"latency_sec":304.991,"latency_breakdown":{"env_setup":99.463,"agent_setup":18.921,"agent_exec":161.293,"verifier":7.191},"taskName":"complex_m2m_custom_junction","jobId":"XTUHJ4D","exec_duration":161.293}]},{"taskName":"composite_pk_upsert","instruction":"$9","trials":[{"job_name":"2026-05-29__05-42-30","trial_name":"composite_pk_upsert__v63aoAU","model":"gemini-3.1-pro","rawModel":"google/gemini-3.1-pro","agent":"Pochi","passed":true,"reward":1,"error":false,"latency_sec":261.676,"latency_breakdown":{"env_setup":97.075,"agent_setup":19.867,"agent_exec":121.07,"verifier":3.38},"taskName":"composite_pk_upsert","jobId":"v63aoAU","exec_duration":121.07},{"job_name":"2026-05-29__05-42-30","trial_name":"composite_pk_upsert__MEHwp85","model":"gpt-5.2-codex","rawModel":"openai/gpt-5.2-codex","agent":"Pochi","passed":false,"reward":0,"error":false,"latency_sec":204.63,"latency_breakdown":{"env_setup":61.199,"agent_setup":19.986,"agent_exec":42.129,"verifier":61.014},"taskName":"composite_pk_upsert","jobId":"MEHwp85","exec_duration":42.129},{"job_name":"2026-05-29__05-42-30","trial_name":"composite_pk_upsert__aHaaHnh","model":"glm-5.1","rawModel":"zai/glm-5.1","agent":"Pochi","passed":true,"reward":1,"error":false,"latency_sec":208.229,"latency_breakdown":{"env_setup":68.659,"agent_setup":20.945,"agent_exec":99.052,"verifier":1.431},"taskName":"composite_pk_upsert","jobId":"aHaaHnh","exec_duration":99.052}]},{"taskName":"eager_loading_super_many_to_many","instruction":"$a","trials":[{"job_name":"2026-05-29__05-42-30","trial_name":"eager_loading_super_many_to_many__NA3nQBw","model":"gemini-3.1-pro","rawModel":"google/gemini-3.1-pro","agent":"Pochi","passed":true,"reward":1,"error":false,"latency_sec":367.886,"latency_breakdown":{"env_setup":49.618,"agent_setup":20.153,"agent_exec":276.29,"verifier":1.826},"taskName":"eager_loading_super_many_to_many","jobId":"NA3nQBw","exec_duration":276.29},{"job_name":"2026-05-29__05-42-30","trial_name":"eager_loading_super_many_to_many__wLxkGU8","model":"glm-5.1","rawModel":"zai/glm-5.1","agent":"Pochi","passed":false,"reward":0,"error":true,"latency_sec":79.173,"latency_breakdown":{"env_setup":26.191,"agent_setup":19.783,"agent_exec":6.056,"verifier":1.202},"taskName":"eager_loading_super_many_to_many","jobId":"wLxkGU8","exec_duration":6.056},{"job_name":"2026-05-29__05-42-30","trial_name":"eager_loading_super_many_to_many__GKAWFda","model":"gpt-5.2-codex","rawModel":"openai/gpt-5.2-codex","agent":"Pochi","passed":false,"reward":0,"error":false,"latency_sec":171.422,"latency_breakdown":{"env_setup":63.215,"agent_setup":20.289,"agent_exec":64.108,"verifier":1.112},"taskName":"eager_loading_super_many_to_many","jobId":"GKAWFda","exec_duration":64.108}]},{"taskName":"find_or_create_transaction_hook","instruction":"$b","trials":[{"job_name":"2026-05-29__05-42-30","trial_name":"find_or_create_transaction_hook__fm7xDGV","model":"gemini-3.1-pro","rawModel":"google/gemini-3.1-pro","agent":"Pochi","passed":true,"reward":1,"error":false,"latency_sec":508.18,"latency_breakdown":{"env_setup":40.549,"agent_setup":21.264,"agent_exec":424.887,"verifier":0.869},"taskName":"find_or_create_transaction_hook","jobId":"fm7xDGV","exec_duration":424.887},{"job_name":"2026-05-29__05-42-30","trial_name":"find_or_create_transaction_hook__K3dvVQF","model":"glm-5.1","rawModel":"zai/glm-5.1","agent":"Pochi","passed":true,"reward":1,"error":false,"latency_sec":1764.888,"latency_breakdown":{"env_setup":90.05,"agent_setup":20.477,"agent_exec":376.925,"verifier":0.885},"taskName":"find_or_create_transaction_hook","jobId":"K3dvVQF","exec_duration":376.925},{"job_name":"2026-05-29__05-42-30","trial_name":"find_or_create_transaction_hook__w6a4M3E","model":"gpt-5.2-codex","rawModel":"openai/gpt-5.2-codex","agent":"Pochi","passed":false,"reward":0,"error":false,"latency_sec":1293.754,"latency_breakdown":{"env_setup":15.77,"agent_setup":21.95,"agent_exec":48.583,"verifier":0.814},"taskName":"find_or_create_transaction_hook","jobId":"w6a4M3E","exec_duration":48.583}]},{"taskName":"migration_add_column_backfill_fk","instruction":"$c","trials":[{"job_name":"2026-05-29__09-18-17","trial_name":"migration_add_column_backfill_fk__En2RTN5","model":"glm-5.1","rawModel":"zai/glm-5.1","agent":"Pochi","passed":true,"reward":1,"error":false,"latency_sec":2058.066,"latency_breakdown":{"env_setup":178.694,"agent_setup":21.57,"agent_exec":157.504,"verifier":10.958},"taskName":"migration_add_column_backfill_fk","jobId":"En2RTN5","exec_duration":157.504},{"job_name":"2026-05-29__09-18-17","trial_name":"migration_add_column_backfill_fk__9giLTsM","model":"gpt-5.2-codex","rawModel":"openai/gpt-5.2-codex","agent":"Pochi","passed":true,"reward":1,"error":false,"latency_sec":1970.287,"latency_breakdown":{"env_setup":147.725,"agent_setup":21.541,"agent_exec":86.128,"verifier":28.012},"taskName":"migration_add_column_backfill_fk","jobId":"9giLTsM","exec_duration":86.128},{"job_name":"2026-05-29__09-18-17","trial_name":"migration_add_column_backfill_fk__yKroaA9","model":"gemini-3.1-pro","rawModel":"google/gemini-3.1-pro","agent":"Pochi","passed":true,"reward":1,"error":false,"latency_sec":1948.066,"latency_breakdown":{"env_setup":106.872,"agent_setup":20.691,"agent_exec":123.111,"verifier":14.707},"taskName":"migration_add_column_backfill_fk","jobId":"yKroaA9","exec_duration":123.111}]},{"taskName":"nested_includes_filtered","instruction":"$d","trials":[{"job_name":"2026-05-29__03-15-48","trial_name":"nested_includes_filtered__nhg88QD","model":"gemini-3.1-pro","rawModel":"google/gemini-3.1-pro","agent":"Pochi","passed":true,"reward":1,"error":false,"latency_sec":274.364,"latency_breakdown":{"env_setup":74.692,"agent_setup":21.857,"agent_exec":158.476,"verifier":3.892},"taskName":"nested_includes_filtered","jobId":"nhg88QD","exec_duration":158.476},{"job_name":"2026-05-29__03-15-48","trial_name":"nested_includes_filtered__CCTAk8M","model":"gpt-5.2-codex","rawModel":"openai/gpt-5.2-codex","agent":"Pochi","passed":true,"reward":1,"error":false,"latency_sec":192.057,"latency_breakdown":{"env_setup":85.967,"agent_setup":20.455,"agent_exec":43.353,"verifier":24.928},"taskName":"nested_includes_filtered","jobId":"CCTAk8M","exec_duration":43.353},{"job_name":"2026-05-29__03-15-48","trial_name":"nested_includes_filtered__fwiptiS","model":"glm-5.1","rawModel":"zai/glm-5.1","agent":"Pochi","passed":true,"reward":1,"error":false,"latency_sec":457.928,"latency_breakdown":{"env_setup":95.971,"agent_setup":21.101,"agent_exec":314.274,"verifier":9.164},"taskName":"nested_includes_filtered","jobId":"fwiptiS","exec_duration":314.274}]},{"taskName":"paranoid_soft_delete_restore","instruction":"$e","trials":[{"job_name":"2026-05-29__05-42-30","trial_name":"paranoid_soft_delete_restore__R2Vdw9t","model":"glm-5.1","rawModel":"zai/glm-5.1","agent":"Pochi","passed":true,"reward":1,"error":false,"latency_sec":1513.901,"latency_breakdown":{"env_setup":91.064,"agent_setup":20.883,"agent_exec":110.562,"verifier":5.75},"taskName":"paranoid_soft_delete_restore","jobId":"R2Vdw9t","exec_duration":110.562},{"job_name":"2026-05-29__05-42-30","trial_name":"paranoid_soft_delete_restore__KvfQugU","model":"gemini-3.1-pro","rawModel":"google/gemini-3.1-pro","agent":"Pochi","passed":true,"reward":1,"error":false,"latency_sec":1447.848,"latency_breakdown":{"env_setup":61.888,"agent_setup":20.568,"agent_exec":74.758,"verifier":13.173},"taskName":"paranoid_soft_delete_restore","jobId":"KvfQugU","exec_duration":74.758},{"job_name":"2026-05-29__05-42-30","trial_name":"paranoid_soft_delete_restore__UR4D6MS","model":"gpt-5.2-codex","rawModel":"openai/gpt-5.2-codex","agent":"Pochi","passed":true,"reward":1,"error":false,"latency_sec":1422.382,"latency_breakdown":{"env_setup":30.435,"agent_setup":19.982,"agent_exec":56.595,"verifier":4.261},"taskName":"paranoid_soft_delete_restore","jobId":"UR4D6MS","exec_duration":56.595}]},{"taskName":"refactor_sync_to_migrations","instruction":"$f","trials":[{"job_name":"2026-05-29__05-42-30","trial_name":"refactor_sync_to_migrations__eqRmfZc","model":"gemini-3.1-pro","rawModel":"google/gemini-3.1-pro","agent":"Pochi","passed":true,"reward":1,"error":false,"latency_sec":291.838,"latency_breakdown":{"env_setup":86.166,"agent_setup":19.856,"agent_exec":164.103,"verifier":1.996},"taskName":"refactor_sync_to_migrations","jobId":"eqRmfZc","exec_duration":164.103},{"job_name":"2026-05-29__05-42-30","trial_name":"refactor_sync_to_migrations__5Vrabau","model":"glm-5.1","rawModel":"zai/glm-5.1","agent":"Pochi","passed":true,"reward":1,"error":false,"latency_sec":451.31,"latency_breakdown":{"env_setup":143.225,"agent_setup":20.235,"agent_exec":260.798,"verifier":2.736},"taskName":"refactor_sync_to_migrations","jobId":"5Vrabau","exec_duration":260.798},{"job_name":"2026-05-29__05-42-30","trial_name":"refactor_sync_to_migrations__ELM3emf","model":"gpt-5.2-codex","rawModel":"openai/gpt-5.2-codex","agent":"Pochi","passed":true,"reward":1,"error":false,"latency_sec":292.863,"latency_breakdown":{"env_setup":119.784,"agent_setup":21.444,"agent_exec":130.193,"verifier":1.958},"taskName":"refactor_sync_to_migrations","jobId":"ELM3emf","exec_duration":130.193}]},{"taskName":"slug_generation_hook","instruction":"$10","trials":[{"job_name":"2026-05-29__05-13-14","trial_name":"slug_generation_hook__jn9GgbY","model":"gemini-3.1-pro","rawModel":"google/gemini-3.1-pro","agent":"Pochi","passed":true,"reward":1,"error":false,"latency_sec":223.442,"latency_breakdown":{"env_setup":30.875,"agent_setup":19.434,"agent_exec":157.789,"verifier":1.032},"taskName":"slug_generation_hook","jobId":"jn9GgbY","exec_duration":157.789},{"job_name":"2026-05-29__05-13-14","trial_name":"slug_generation_hook__8x2uK6r","model":"gpt-5.2-codex","rawModel":"openai/gpt-5.2-codex","agent":"Pochi","passed":false,"reward":0,"error":false,"latency_sec":315.964,"latency_breakdown":{"env_setup":49.993,"agent_setup":21.217,"agent_exec":50.271,"verifier":180.904},"taskName":"slug_generation_hook","jobId":"8x2uK6r","exec_duration":50.271},{"job_name":"2026-05-29__05-13-14","trial_name":"slug_generation_hook__sgkQvPC","model":"glm-5.1","rawModel":"zai/glm-5.1","agent":"Pochi","passed":true,"reward":1,"error":false,"latency_sec":395.429,"latency_breakdown":{"env_setup":14.265,"agent_setup":20.488,"agent_exec":334.475,"verifier":4.58},"taskName":"slug_generation_hook","jobId":"sgkQvPC","exec_duration":334.475}]}]}]}]]}],["$L11","$L12"],"$L13"]}],"loading":null,"isPartial":false}
+11:["$","script","script-0",{"src":"/sequelize-benchmark/pr-preview/pr-3/_next/static/chunks/67d4b3c35eb682b4.js","async":true}]
+12:["$","script","script-1",{"src":"/sequelize-benchmark/pr-preview/pr-3/_next/static/chunks/f9f579c42c486944.js","async":true}]
+13:["$","$L14",null,{"children":["$","$2",null,{"name":"Next.MetadataOutlet","children":"$@15"}]}]
+15:null
